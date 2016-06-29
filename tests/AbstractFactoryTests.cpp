@@ -62,6 +62,16 @@ SUITE(AbstractFactoryTest)
 	{
 		CreateMacGui();
 	}
+
+	TEST(UbuntuGuiTest)
+	{
+		CreateUbuntuGui();
+	}
+
+	TEST(WinGuiTest)
+	{
+		CreateWinGui();
+	}
 }
 
 int main(int, const char *[])
