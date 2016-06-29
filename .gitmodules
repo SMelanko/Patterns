@@ -1,3 +1,6 @@
 [submodule "extern/unittest-cpp"]
 	path = extern/unittest-cpp
 	url = https://github.com/Microsoft/unittest-cpp.git
+[submodule "extern/GSL"]
+	path = extern/GSL
+	url = https://github.com/Microsoft/GSL.git
