@@ -1,12 +1,6 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.0.2)
 
 project(PatternsTests CXX)
-
-include_directories(
-	../include
-	${PATTERNS_EXTERN_DIR}/unittest-cpp
-	${PATTERNS_EXTERN_DIR}/GSL
-)
 
 if (MSVC14 OR MSVC12) # Has the support we need.
 	# Remove unnecessary warnings about unchecked iterators.
@@ -21,33 +15,20 @@ else ()
 	elseif (COMPILER_SUPPORTS_CXX11)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-missing-braces")
 	else ()
-		message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support."
+		message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. "
 			"Please use a different C++ compiler.")
 	endif ()
 endif ()
 
-set (Patterns_HEADERS
-	../include/creational/AbstractFactory.h
-)
-
-set(Patterns_SOURCES
-	../src/creational/AbstractFactory.cpp
-)
-
-function(ADD_PATTERNS_TEST name)
-	add_executable(${name}
-		${name}.cpp
+function(AppendPatternTest src_file_name)
+	add_executable(${src_file_name}
+		${src_file_name}.cpp
 		${Patterns_HEADERS}
 		${Patterns_SOURCES}
 	)
-	target_link_libraries(${name} UnitTest++)
-	install(TARGETS ${name}
-		RUNTIME DESTINATION bin
-	)
-	add_test(
-		${name}
-	  	${name}
-	)
+	target_link_libraries(${src_file_name} UnitTest++)
+	install(TARGETS ${src_file_name} RUNTIME DESTINATION bin)
+	add_test(${src_file_name} ${src_file_name})
 endfunction()
 
-ADD_PATTERNS_TEST(AbstractFactoryTests)
+AppendPatternTest(AbstractFactoryTests)

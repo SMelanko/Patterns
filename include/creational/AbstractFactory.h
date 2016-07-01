@@ -33,14 +33,15 @@ class Button
 {
 public:
 	inline virtual ~Button() = default;
-	virtual void Paint() noexcept = 0;
+	virtual void Paint() const noexcept = 0;
 };
 
 // Product A1.
 class WinButton : public Button
 {
+public:
 	inline virtual ~WinButton() = default;
-	void Paint() noexcept override
+	void Paint() const noexcept override
 	{
 		std::cout << "WinButton" << std::endl;
 	}
@@ -49,8 +50,9 @@ class WinButton : public Button
 // Product A2.
 class MacButton : public Button
 {
+public:
 	inline virtual ~MacButton() = default;
-	void Paint() noexcept override
+	void Paint() const noexcept override
 	{
 		std::cout << "MacButton" << std::endl;
 	}
@@ -59,8 +61,9 @@ class MacButton : public Button
 // Product A3.
 class UbuntuButton : public Button
 {
+public:
 	inline virtual ~UbuntuButton() = default;
-	void Paint() noexcept override
+	void Paint() const noexcept override
 	{
 		std::cout << "UbuntuButton" << std::endl;
 	}
@@ -73,14 +76,15 @@ class ScrollBar
 {
 public:
 	inline virtual ~ScrollBar() = default;
-	virtual void Paint() noexcept = 0;
+	virtual void Paint() const noexcept = 0;
 };
 
 // Product B1.
 class WinScrollBar : public ScrollBar
 {
+public:
 	inline virtual ~WinScrollBar() = default;
-	void Paint() noexcept override
+	void Paint() const noexcept override
 	{
 		std::cout << "WinScrollBar" << std::endl;
 	}
@@ -89,8 +93,9 @@ class WinScrollBar : public ScrollBar
 // Product B2.
 class MacScrollBar : public ScrollBar
 {
+public:
 	inline virtual ~MacScrollBar() = default;
-	void Paint() noexcept override
+	void Paint() const noexcept override
 	{
 		std::cout << "MacScrollBar" << std::endl;
 	}
@@ -99,8 +104,9 @@ class MacScrollBar : public ScrollBar
 // Product B3.
 class UbuntuScrollBar : public ScrollBar
 {
+public:
 	inline virtual ~UbuntuScrollBar() = default;
-	void Paint() noexcept override
+	void Paint() const noexcept override
 	{
 		std::cout << "UbuntuScrollBar" << std::endl;
 	}
@@ -113,8 +119,8 @@ class GuiFactory
 {
 public:
 	inline virtual ~GuiFactory() = default;
-	virtual Button* CreateButton() = 0;
-	virtual ScrollBar* CreateScrollBar() = 0;
+	virtual std::unique_ptr<Button> CreateButton() const = 0;
+	virtual std::unique_ptr<ScrollBar> CreateScrollBar() const = 0;
 };
 
 // Concrete factory 1.
@@ -122,13 +128,13 @@ class WinFactory : public GuiFactory
 {
 public:
 	inline virtual ~WinFactory() = default;
-	Button* CreateButton() override
+	std::unique_ptr<Button> CreateButton() const override
 	{
-		return new WinButton{};
+		return std::make_unique<WinButton>();
 	}
-	ScrollBar* CreateScrollBar() override
+	std::unique_ptr<ScrollBar> CreateScrollBar() const override
 	{
-		return new WinScrollBar{};
+		return std::make_unique<WinScrollBar>();
 	}
 };
 
@@ -137,13 +143,13 @@ class MacFactory : public GuiFactory
 {
 public:
 	inline virtual ~MacFactory() = default;
-	Button* CreateButton() override
+	std::unique_ptr<Button> CreateButton() const override
 	{
-		return new MacButton{};
+		return std::make_unique<MacButton>();
 	}
-	ScrollBar* CreateScrollBar() override
+	std::unique_ptr<ScrollBar> CreateScrollBar() const override
 	{
-		return new MacScrollBar{};
+		return std::make_unique<MacScrollBar>();
 	}
 };
 
@@ -152,13 +158,13 @@ class UbuntuFactory : public GuiFactory
 {
 public:
 	inline virtual ~UbuntuFactory() = default;
-	Button* CreateButton() override
+	std::unique_ptr<Button> CreateButton() const override
 	{
-		return new UbuntuButton{};
+		return std::make_unique<UbuntuButton>();
 	}
-	ScrollBar* CreateScrollBar() override
+	std::unique_ptr<ScrollBar> CreateScrollBar() const override
 	{
-		return new UbuntuScrollBar{};
+		return std::make_unique<UbuntuScrollBar>();
 	}
 };
 
