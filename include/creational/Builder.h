@@ -32,7 +32,7 @@ namespace creational
 // Definitions of the car's parts.
 //
 
-struct Body
+class Body
 {
 public:
 	Body() = default;
@@ -55,7 +55,7 @@ private:
 	std::string _shape;
 };
 
-struct Engine
+class Engine
 {
 public:
 	constexpr Engine() = default;
