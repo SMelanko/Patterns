@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 ///
-/// Copyright (c) 2016 Slava Melanko. All rights reserved.
+/// Copyright (c) 2016 Slava Melanko.
 ///
 /// This code is licensed under the MIT License (MIT).
 ///
@@ -29,6 +29,7 @@ namespace creational
 //
 // Abstract product A.
 //
+
 class Button
 {
 public:
@@ -72,6 +73,7 @@ public:
 //
 // Abstract product B.
 //
+
 class ScrollBar
 {
 public:
@@ -115,6 +117,7 @@ public:
 //
 // Abstract factory.
 //
+
 class GuiFactory
 {
 public:

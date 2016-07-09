@@ -32,3 +32,4 @@ function(AppendPatternTest src_file_name)
 endfunction()
 
 AppendPatternTest(AbstractFactoryTests)
+AppendPatternTest(BuilderTests)

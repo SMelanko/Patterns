@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 ///
-/// Copyright (c) 2016 Slava Melanko. All rights reserved.
+/// Copyright (c) 2016 Slava Melanko.
 ///
 /// This code is licensed under the MIT License (MIT).
 ///
@@ -16,7 +16,7 @@
 
 #include "creational/AbstractFactory.h"
 
-#include <UnitTest++/UnitTest++.h> 
+#include <UnitTest++/UnitTest++.h>
 
 #include <memory>
 
@@ -74,7 +74,7 @@ SUITE(AbstractFactoryTest)
 	}
 }
 
-int main(int, const char *[])
+int main(int, char*[])
 {
 	return UnitTest::RunAllTests();
 }
