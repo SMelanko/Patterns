@@ -178,7 +178,7 @@ public:
 	{
 	}
 
-	std::shared_ptr<Car> MakeCar() const
+	std::shared_ptr<Car> ConstructCar() const
 	{
 		auto car = std::make_shared<Car>();
 		car->SetBody(_builder->GetBody());
