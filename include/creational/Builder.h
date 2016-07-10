@@ -160,9 +160,22 @@ class Builder
 public:
 	virtual ~Builder() = default;
 
-	virtual Body GetBody() const = 0;
-	virtual Engine GetEngine() const = 0;
-	virtual Wheels GetWheels() const = 0;
+	virtual void BuildBody() = 0;
+	virtual void BuildEngine() = 0;
+	virtual void BuildWheels() = 0;
+
+	void CreateNewCar()
+	{
+		_car.reset(new Car{});
+	}
+
+	std::shared_ptr<Car> GetCar() const noexcept
+	{
+		return _car;
+	}
+
+protected:
+	std::shared_ptr<Car> _car;
 };
 
 //
@@ -180,11 +193,11 @@ public:
 
 	std::shared_ptr<Car> ConstructCar() const
 	{
-		auto car = std::make_shared<Car>();
-		car->SetBody(_builder->GetBody());
-		car->SetEngine(_builder->GetEngine());
-		car->SetWheels(_builder->GetWheels());
-		return car;
+		_builder->CreateNewCar();
+		_builder->BuildBody();
+		_builder->BuildEngine();
+		_builder->BuildWheels();
+		return _builder->GetCar();
 	}
 
 	std::shared_ptr<Builder> GetBuilder() const noexcept
@@ -210,18 +223,18 @@ class JeepBuilder : public Builder
 public:
 	virtual ~JeepBuilder() = default;
 
-	Body GetBody() const override
+	void BuildBody() override
 	{
-		return Body{ "SUV" };
+		_car->SetBody(Body{ "SUV" });
 	}
-	Engine GetEngine() const override
+	void BuildEngine() override
 	{
-		return Engine{ 400 };
+		_car->SetEngine(Engine{ 400 });
 	}
-	Wheels GetWheels() const override
+	void BuildWheels() override
 	{
 		Wheel wheel{ 22 };
-		return { wheel, wheel, wheel, wheel };
+		_car->SetWheels({ wheel, wheel, wheel, wheel });
 	}
 };
 
@@ -230,18 +243,18 @@ class MitsubishiBuilder : public Builder
 public:
 	virtual ~MitsubishiBuilder() = default;
 
-	Body GetBody() const override
+	void BuildBody() override
 	{
-		return Body{ "Coupe" };
+		_car->SetBody(Body{ "Coupe" });
 	}
-	Engine GetEngine() const override
+	void BuildEngine() override
 	{
-		return Engine{ 300 };
+		_car->SetEngine(Engine{ 300 });
 	}
-	Wheels GetWheels() const override
+	void BuildWheels() override
 	{
 		Wheel wheel{ 19 };
-		return { wheel, wheel, wheel, wheel };
+		_car->SetWheels({ wheel, wheel, wheel, wheel });
 	}
 };
 

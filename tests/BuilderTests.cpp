@@ -29,6 +29,7 @@ static void BuildJeep()
 	CHECK(car->GetBody().GetShape() == "SUV");
 	CHECK(car->GetEngine().GetHorsePower() == 400);
 	CHECK(car->GetWheels().at(0).GetSize() == 22);
+	car->PrintSpecifications();
 
 	std::cout << std::endl;
 }
