@@ -33,3 +33,4 @@ endfunction()
 
 AppendPatternTest(AbstractFactoryTests)
 AppendPatternTest(BuilderTests)
+AppendPatternTest(FactoryMethodTests)
