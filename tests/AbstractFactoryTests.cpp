@@ -20,57 +20,80 @@
 
 #include <memory>
 
+using GuiFactoryPtr = std::unique_ptr<pattern::creational::GuiFactory>;
+using ButtonPtr = std::unique_ptr<pattern::creational::Button>;
+using ScrollBarPtr = std::unique_ptr<pattern::creational::ScrollBar>;
+
+static void CreateCurrentOsGui()
+{
+	GuiFactoryPtr guiFactory = nullptr;
+#if defined(_WIN32) || defined(_WIN64)
+	guiFactory = std::make_unique<pattern::creational::WinFactory>();
+#elif __APPLE__
+	guiFactory = std::make_unique<pattern::creational::MacFactory>();
+#elif __linux
+	guiFactory = std::make_unique<pattern::creational::UbuntuFactory>();
+#endif
+	ButtonPtr btn{ guiFactory->CreateButton() };
+	btn->Paint();
+	ScrollBarPtr scroll{ guiFactory->CreateScrollBar() };
+	scroll->Paint();
+}
+
 static void CreateMacGui()
 {
-	std::unique_ptr<pattern::creational::GuiFactory> guiFactory
-		= std::make_unique<pattern::creational::MacFactory>();
-	std::unique_ptr<pattern::creational::Button> macBtn{
-		guiFactory->CreateButton() };
+	GuiFactoryPtr guiFactory = std::make_unique<pattern::creational::MacFactory>();
+	ButtonPtr macBtn{ guiFactory->CreateButton() };
 	macBtn->Paint();
-	std::unique_ptr<pattern::creational::ScrollBar> macScroll{
-		guiFactory->CreateScrollBar() };
+	ScrollBarPtr macScroll{ guiFactory->CreateScrollBar() };
 	macScroll->Paint();
 }
 
 static void CreateUbuntuGui()
 {
-	std::unique_ptr<pattern::creational::GuiFactory> guiFactory
-		= std::make_unique<pattern::creational::UbuntuFactory>();
-	std::unique_ptr<pattern::creational::Button> ubuntuBtn{
-		guiFactory->CreateButton() };
+	GuiFactoryPtr guiFactory = std::make_unique<pattern::creational::UbuntuFactory>();
+	ButtonPtr ubuntuBtn{ guiFactory->CreateButton() };
 	ubuntuBtn->Paint();
-	std::unique_ptr<pattern::creational::ScrollBar> ubuntuScroll{
-		guiFactory->CreateScrollBar() };
+	ScrollBarPtr ubuntuScroll{ guiFactory->CreateScrollBar() };
 	ubuntuScroll->Paint();
 }
 
 static void CreateWinGui()
 {
-	std::unique_ptr<pattern::creational::GuiFactory> guiFactory
-		= std::make_unique<pattern::creational::WinFactory>();
-	std::unique_ptr<pattern::creational::Button> winBtn{
-		guiFactory->CreateButton() };
+	GuiFactoryPtr guiFactory = std::make_unique<pattern::creational::WinFactory>();
+	ButtonPtr winBtn{ guiFactory->CreateButton() };
 	winBtn->Paint();
-	std::unique_ptr<pattern::creational::ScrollBar> winScroll{
-		guiFactory->CreateScrollBar() };
+	ScrollBarPtr winScroll{ guiFactory->CreateScrollBar() };
 	winScroll->Paint();
+}
+
+static void TestFuncHandler(std::function<void()> func)
+{
+	std::cout << std::endl;
+	func();
+	std::cout << std::endl;
 }
 
 SUITE(AbstractFactoryTest)
 {
 	TEST(MacGuiTest)
 	{
-		CreateMacGui();
+		TestFuncHandler(CreateMacGui);
 	}
 
 	TEST(UbuntuGuiTest)
 	{
-		CreateUbuntuGui();
+		TestFuncHandler(CreateUbuntuGui);
 	}
 
 	TEST(WinGuiTest)
 	{
-		CreateWinGui();
+		TestFuncHandler(CreateWinGui);
+	}
+
+	TEST(CurrentOsWidgetTest)
+	{
+		TestFuncHandler(CreateCurrentOsGui);
 	}
 }
 

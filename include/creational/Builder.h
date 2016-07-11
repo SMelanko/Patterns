@@ -151,6 +151,8 @@ private:
 	Wheels wheels;
 };
 
+using CarPtr = std::shared_ptr<Car>;
+
 //
 // Abstract builder.
 //
@@ -169,13 +171,13 @@ public:
 		_car.reset(new Car{});
 	}
 
-	std::shared_ptr<Car> GetCar() const noexcept
+	CarPtr GetCar() const noexcept
 	{
 		return _car;
 	}
 
 protected:
-	std::shared_ptr<Car> _car;
+	CarPtr _car;
 };
 
 //
@@ -185,13 +187,15 @@ protected:
 class Director
 {
 public:
+	using BuilderPtr = std::shared_ptr<Builder>;
+
 	Director() = default;
-	Director(std::shared_ptr<Builder> builder)
+	Director(BuilderPtr builder)
 		: _builder{ builder }
 	{
 	}
 
-	std::shared_ptr<Car> ConstructCar() const
+	CarPtr ConstructCar() const
 	{
 		_builder->CreateNewCar();
 		_builder->BuildBody();
@@ -200,18 +204,18 @@ public:
 		return _builder->GetCar();
 	}
 
-	std::shared_ptr<Builder> GetBuilder() const noexcept
+	BuilderPtr GetBuilder() const noexcept
 	{
 		return _builder;
 	}
 
-	void SetBuilder(std::shared_ptr<Builder> builder)
+	void SetBuilder(BuilderPtr builder)
 	{
 		_builder = builder;
 	}
 
 private:
-	std::shared_ptr<Builder> _builder = nullptr;
+	BuilderPtr _builder = nullptr;
 };
 
 //

@@ -25,7 +25,7 @@ static void BuildJeep()
 
 	std::cout << std::endl << "Jeep" << std::endl;
 
-	std::shared_ptr<pattern::creational::Car> car = dir.ConstructCar();
+	auto car = dir.ConstructCar();
 	CHECK(car->GetBody().GetShape() == "SUV");
 	CHECK(car->GetEngine().GetHorsePower() == 400);
 	CHECK(car->GetWheels().at(0).GetSize() == 22);
@@ -41,7 +41,7 @@ static void BuildMitsubishi()
 
 	std::cout << std::endl << "Mitsubishi" << std::endl;
 
-	std::shared_ptr<pattern::creational::Car> car = dir.ConstructCar();
+	auto car = dir.ConstructCar();
 	CHECK(car->GetBody().GetShape() == "Coupe");
 	CHECK(car->GetEngine().GetHorsePower() == 300);
 	CHECK(car->GetWheels().at(0).GetSize() == 19);
