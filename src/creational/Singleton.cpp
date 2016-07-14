@@ -21,10 +21,10 @@ namespace pattern
 namespace creational
 {
 
-Session& Session::GetInstance()
+Session& Session::GetInstance() noexcept
 {
-	static Session session;
-	return &session;
+	static Session instance;
+	return instance;
 }
 
 } // namespace creational
