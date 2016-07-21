@@ -37,3 +37,5 @@ AppendPatternTest(FactoryMethodTests)
 AppendPatternTest(ObjectPoolTests)
 AppendPatternTest(PrototypeTests)
 AppendPatternTest(SingletonTests)
+
+AppendPatternTest(AdapterTests)
