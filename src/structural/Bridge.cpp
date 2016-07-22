@@ -14,14 +14,60 @@
 ///
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "structural/AdapterPrivateInheritance.h"
+#include "structural/Bridge.h"
 
 namespace pattern
 {
 namespace structural
 {
 
-// Impl
+ConsoleLogger::ConsoleLogger()
+	: Logger(
+		#ifdef MT
+			new MtLoggerImpl{}
+		#else
+			new StLoggerImpl{}
+		#endif
+	)
+{
+}
+
+void ConsoleLogger::Log(std::string& str) noexcept
+{
+	_pimpl->ConsoleLog(str);
+}
+
+FileLogger::FileLogger(const std::string& filename)
+	: Logger(
+		#ifdef MT
+			new MtLoggerImpl{}
+		#else
+			new StLoggerImpl{}
+		#endif
+	), _file(filename)
+{
+}
+
+void FileLogger::Log(std::string& str) noexcept
+{
+	_pimpl->FileLog(_file, str);
+}
+
+SocketLogger::SocketLogger(const std::string& host, const int port)
+	: Logger(
+		#ifdef MT
+			new MtLoggerImpl{}
+		#else
+			new StLoggerImpl{}
+		#endif
+	), _host(host), _port(port)
+{
+}
+
+void SocketLogger::Log(std::string& str) noexcept
+{
+	_pimpl->SocketLog(_host, _port, str);
+}
 
 } // namespace structural
 } // namespace pattern

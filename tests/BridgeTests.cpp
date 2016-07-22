@@ -14,14 +14,38 @@
 ///
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "structural/AdapterPrivateInheritance.h"
+#include "structural/Bridge.h"
 
-namespace pattern
+#include <UnitTest++/UnitTest++.h>
+
+SUITE(BridgeTest)
 {
-namespace structural
+	TEST(StConsoleLoggerTest)
+	{
+		std::unique_ptr<pattern::structural::Logger> logger =
+			std::make_unique<pattern::structural::ConsoleLogger>();
+		std::string str{ "message" };
+		logger->Log(str);
+	}
+
+	TEST(StFileLoggerTest)
+	{
+		std::unique_ptr<pattern::structural::Logger> logger =
+			std::make_unique<pattern::structural::FileLogger>("log.txt");
+		std::string str{ "message" };
+		logger->Log(str);
+	}
+
+	TEST(StSocketLoggerTest)
+	{
+		std::unique_ptr<pattern::structural::Logger> logger =
+			std::make_unique<pattern::structural::SocketLogger>("localhost", 80);
+		std::string str{ "message" };
+		logger->Log(str);
+	}
+}
+
+int main(int, char*[])
 {
-
-// Impl
-
-} // namespace structural
-} // namespace pattern
+	return UnitTest::RunAllTests();
+}

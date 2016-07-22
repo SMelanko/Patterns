@@ -39,3 +39,4 @@ AppendPatternTest(PrototypeTests)
 AppendPatternTest(SingletonTests)
 
 AppendPatternTest(AdapterTests)
+AppendPatternTest(BridgeTests)

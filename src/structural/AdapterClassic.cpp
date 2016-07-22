@@ -21,7 +21,7 @@ namespace pattern
 namespace structural
 {
 
-
+// Impl
 
 } // namespace structural
 } // namespace pattern

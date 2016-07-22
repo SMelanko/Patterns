@@ -22,11 +22,13 @@ set(Structural_INCLUDE_DIR ${Patterns_INCLUDE_DIR}/structural)
 file(GLOB Behavioral_HEADERS "${Behavioral_INCLUDE_DIR}/*.h")
 file(GLOB Creatinal_HEADERS "${Creatinal_INCLUDE_DIR}/*.h")
 file(GLOB Structural_HEADERS "${Structural_INCLUDE_DIR}/*.h")
+file(GLOB Structural_UTILS_HEADERS "${Structural_INCLUDE_DIR}/utils/*.h")
 
 set(Patterns_HEADERS
 	${Behavioral_HEADERS}
 	${Creatinal_HEADERS}
 	${Structural_HEADERS}
+	${Structural_UTILS_HEADERS}
 )
 
 set(Patterns_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
