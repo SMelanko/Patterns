@@ -22,13 +22,13 @@ namespace structural
 {
 
 ConsoleLogger::ConsoleLogger()
-	: Logger(
+	: Logger{
 		#ifdef MT
 			new MtLoggerImpl{}
 		#else
 			new StLoggerImpl{}
 		#endif
-	)
+	}
 {
 }
 
@@ -38,13 +38,13 @@ void ConsoleLogger::Log(std::string& str) noexcept
 }
 
 FileLogger::FileLogger(const std::string& filename)
-	: Logger(
+	: Logger{
 		#ifdef MT
 			new MtLoggerImpl{}
 		#else
 			new StLoggerImpl{}
 		#endif
-	), _file(filename)
+	}, _file{ filename }
 {
 }
 
@@ -54,13 +54,13 @@ void FileLogger::Log(std::string& str) noexcept
 }
 
 SocketLogger::SocketLogger(const std::string& host, const int port)
-	: Logger(
+	: Logger{
 		#ifdef MT
 			new MtLoggerImpl{}
 		#else
 			new StLoggerImpl{}
 		#endif
-	), _host(host), _port(port)
+	}, _host{ host }, _port{ port }
 {
 }
 
