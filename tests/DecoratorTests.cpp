@@ -18,10 +18,36 @@
 
 #include <UnitTest++/UnitTest++.h>
 
-SUITE(AbstractFactoryTest)
+#include <include/gsl_util.h>
+
+using InterfacePtr = std::unique_ptr<pattern::structural::Interface>;
+
+SUITE(DecoratorTest)
 {
-	TEST(EmptyTest)
+	TEST(DecorTest)
 	{
+		auto _ = gsl::finally([] { std::cout << std::endl; });
+
+		InterfacePtr x{
+			new pattern::structural::X{
+				std::make_shared<pattern::structural::Core>() } };
+		InterfacePtr xy{
+			new pattern::structural::Y{
+				std::make_shared<pattern::structural::X>(
+					std::make_shared<pattern::structural::Core>()) } };
+		InterfacePtr xyz{
+			new pattern::structural::Z{
+				std::make_shared<pattern::structural::Y>(
+					std::make_shared<pattern::structural::X>(
+						std::make_shared<pattern::structural::Core>())) } };
+
+		std::cout << std::endl;
+		x->DoIt();
+		std::cout << std::endl;
+		xy->DoIt();
+		std::cout << std::endl;
+		xyz->DoIt();
+		std::cout << std::endl << std::endl;
 	}
 }
 
