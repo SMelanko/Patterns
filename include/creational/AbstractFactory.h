@@ -20,6 +20,7 @@
 #define PATTERNS_ABSTRACT_FACTORY_H
 
 #include <iostream>
+#include <memory>
 
 namespace pattern
 {

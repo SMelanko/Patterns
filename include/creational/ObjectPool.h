@@ -19,6 +19,7 @@
 #ifndef PATTERNS_OBJECT_POOL_H
 #define PATTERNS_OBJECT_POOL_H
 
+#include <memory>
 #include <vector>
 
 namespace pattern

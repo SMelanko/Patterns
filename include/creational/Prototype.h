@@ -20,6 +20,7 @@
 #define PATTERNS_PROTOTYPE_H
 
 #include <iostream>
+#include <memory>
 
 namespace pattern
 {
