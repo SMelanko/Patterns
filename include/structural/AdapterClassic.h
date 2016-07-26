@@ -63,7 +63,7 @@ private:
 	std::unique_ptr<FahrenheitSensor> _fsensor;
 };
 
-} // namespace creational
 } // namespace structural
+} // namespace pattern
 
 #endif // PATTERN_STRUCTURAL_ADAPTER_CLASSIC_H

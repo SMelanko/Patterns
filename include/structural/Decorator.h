@@ -140,8 +140,8 @@ public:
 	}
 };
 
-} // namespace creational
 } // namespace structural
+} // namespace pattern
 
 #endif // PATTERN_STRUCTURAL_DECORATOR_H
 

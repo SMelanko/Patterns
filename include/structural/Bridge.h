@@ -79,7 +79,7 @@ private:
 	int _port;
 };
 
-} // namespace creational
 } // namespace structural
+} // namespace pattern
 
 #endif // PATTERN_STRUCTURAL_BRIDGE_H

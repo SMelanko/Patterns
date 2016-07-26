@@ -64,7 +64,7 @@ public:
 	}
 };
 
-} // namespace creational
 } // namespace structural
+} // namespace pattern
 
 #endif // PATTERN_STRUCTURAL_ADAPTER_PRIV_INHERITANCE_H

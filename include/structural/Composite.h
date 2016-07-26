@@ -103,7 +103,7 @@ private:
 	std::vector<UnitPtr> _units;
 };
 
-} // namespace creational
 } // namespace structural
+} // namespace pattern
 
 #endif // PATTERN_STRUCTURAL_COMPOSITE_H
