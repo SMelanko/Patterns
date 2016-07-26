@@ -20,26 +20,36 @@ else ()
 	endif ()
 endif ()
 
-function(AppendPatternTest src_file_name)
-	add_executable(${src_file_name}
-		${src_file_name}.cpp
-		${Patterns_HEADERS}
-		${Patterns_SOURCES}
-	)
-	target_link_libraries(${src_file_name} UnitTest++)
-	install(TARGETS ${src_file_name} RUNTIME DESTINATION bin)
-	add_test(${src_file_name} ${src_file_name})
+function(PatternTestImpl class name)
+        set(test_name ${name}Tests)
+        add_executable(${test_name}
+                ${Patterns_HEADERS}
+                ../src/${class}/${name}.cpp
+                ${test_name}.cpp
+        )
+        target_link_libraries(${test_name} UnitTest++)
+        install(TARGETS ${test_name} RUNTIME DESTINATION bin)
+        add_test(${test_name} ${test_name})
 endfunction()
 
-AppendPatternTest(AbstractFactoryTests)
-AppendPatternTest(BuilderTests)
-AppendPatternTest(FactoryMethodTests)
-AppendPatternTest(ObjectPoolTests)
-AppendPatternTest(PrototypeTests)
-AppendPatternTest(SingletonTests)
+function(AppendCreationalPatternTest name)
+        PatternTestImpl(creational ${name})
+endfunction()
 
-AppendPatternTest(AdapterTests)
-AppendPatternTest(BridgeTests)
-AppendPatternTest(CompositeTests)
-AppendPatternTest(DecoratorTests)
-AppendPatternTest(FacadeTests)
+function(AppendStructuralPatternTest name)
+        PatternTestImpl(structural ${name})
+endfunction()
+
+AppendCreationalPatternTest(AbstractFactory)
+AppendCreationalPatternTest(Builder)
+AppendCreationalPatternTest(FactoryMethod)
+AppendCreationalPatternTest(ObjectPool)
+AppendCreationalPatternTest(Prototype)
+AppendCreationalPatternTest(Singleton)
+
+AppendStructuralPatternTest(Adapter)
+AppendStructuralPatternTest(Bridge)
+AppendStructuralPatternTest(Composite)
+AppendStructuralPatternTest(Decorator)
+AppendStructuralPatternTest(Facade)
+AppendStructuralPatternTest(Flyweight)

@@ -14,14 +14,18 @@
 ///
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "structural/AdapterClassic.h"
+#include "structural/Flyweight.h"
 
-namespace pattern
+#include <UnitTest++/UnitTest++.h>
+
+SUITE(FlyweightTest)
 {
-namespace structural
+	TEST(Test)
+	{
+	}
+}
+
+int main(int, char*[])
 {
-
-// Impl
-
-} // namespace structural
-} // namespace pattern
+	return UnitTest::RunAllTests();
+}

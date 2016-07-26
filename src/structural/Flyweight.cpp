@@ -1,3 +1,4 @@
+ 
 ///////////////////////////////////////////////////////////////////////////////
 ///
 /// Copyright (c) 2016 Slava Melanko.
@@ -14,30 +15,14 @@
 ///
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "structural/Adapter.h"
+#include "structural/Flyweight.h"
 
-#include <UnitTest++/UnitTest++.h>
-
-SUITE(AdapterTest)
+namespace pattern
 {
-	TEST(AdapterClassicTest)
-	{
-		std::unique_ptr<pattern::structural::CelsiusSensor> sensor =
-			std::make_unique<pattern::structural::Adapter>(
-				new pattern::structural::FahrenheitSensor);
-		CHECK(sensor->GetTemperature() == 0);
-	}
-
-	TEST(AdapterPrivateInheritance)
-	{
-		std::unique_ptr<pattern::structural::CelsiusSensor1> sensor =
-			std::make_unique<pattern::structural::Adapter1>();
-		sensor->Adjust();
-		CHECK(sensor->GetTemperature() == 0);
-	}
-}
-
-int main(int, char*[])
+namespace structural
 {
-	return UnitTest::RunAllTests();
-}
+
+// Impl
+
+} // namespace structural
+} // namespace pattern

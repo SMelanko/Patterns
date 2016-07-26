@@ -14,7 +14,7 @@
 ///
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "structural/AdapterPrivateInheritance.h"
+#include "structural/Adapter.h"
 
 namespace pattern
 {

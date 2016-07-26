@@ -1,3 +1,4 @@
+
 ///////////////////////////////////////////////////////////////////////////////
 ///
 /// Copyright (c) 2016 Slava Melanko.
@@ -16,54 +17,17 @@
 
 #pragma once
 
-#ifndef PATTERN_STRUCTURAL_ADAPTER_CLASSIC_H
-#define PATTERN_STRUCTURAL_ADAPTER_CLASSIC_H
-
-#include <memory>
+#ifndef PATTERN_STRUCTURAL_FLYWEIGHT_H
+#define PATTERN_STRUCTURAL_FLYWEIGHT_H
 
 namespace pattern
 {
 namespace structural
 {
 
-// This is already existing class.
-class FahrenheitSensor
-{
-public:
-	float GetFahrenheitTemp() const noexcept
-	{
-		float t = 32.0;
-		// ...
-		return t;
-	}
-};
 
-class CelsiusSensor
-{
-public:
-	virtual ~CelsiusSensor() = default;
-
-	virtual float GetTemperature() const noexcept = 0;
-};
-
-class Adapter : public CelsiusSensor
-{
-public:
-	explicit Adapter(FahrenheitSensor* p)
-		: _fsensor{ p }
-	{
-	}
-
-	float GetTemperature() const noexcept override
-	{
-		return (_fsensor->GetFahrenheitTemp() - 32.0) * 5.0 / 9.0;
-	}
-
-private:
-	std::unique_ptr<FahrenheitSensor> _fsensor;
-};
 
 } // namespace structural
 } // namespace pattern
 
-#endif // PATTERN_STRUCTURAL_ADAPTER_CLASSIC_H
+#endif // PATTERN_STRUCTURAL_FLYWEIGHT_H
