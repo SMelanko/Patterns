@@ -20,8 +20,24 @@
 
 SUITE(FlyweightTest)
 {
-	TEST(Test)
+	TEST(DialogTest)
 	{
+		std::vector<std::shared_ptr<pattern::structural::DialogBox>> dialogs;
+		dialogs.reserve(2);
+		dialogs.push_back(std::make_shared<pattern::structural::FileSelection>(
+			pattern::structural::FlyweightFactory::GetIcon("go"),
+			pattern::structural::FlyweightFactory::GetIcon("stop"),
+			pattern::structural::FlyweightFactory::GetIcon("select")));
+		dialogs.push_back(std::make_shared<pattern::structural::CommitTransaction>(
+			pattern::structural::FlyweightFactory::GetIcon("select"),
+			pattern::structural::FlyweightFactory::GetIcon("stop"),
+			pattern::structural::FlyweightFactory::GetIcon("undo")));
+
+		for (const auto& dialog : dialogs) {
+			dialog->Draw();
+		}
+
+		pattern::structural::FlyweightFactory::ReportTheIcons();
 	}
 }
 
