@@ -28,10 +28,18 @@ namespace pattern
 namespace structural
 {
 
-class RealImage
+class Image
 {
 public:
-	explicit constexpr RealImage(const int id)
+	virtual ~Image() = default;
+
+	virtual void Draw() noexcept = 0;
+};
+
+class RealImage : public Image
+{
+public:
+	explicit RealImage(const int id)
 		: _id{ id }
 	{
 		std::cout << "\tctor: " << _id << '\n';
@@ -41,7 +49,7 @@ public:
 		std::cout << "\tdtor: " << _id << '\n';
 	}
 
-	void Draw() const noexcept
+	void Draw() noexcept override
 	{
 		std::cout << "\tdrawing image " << _id << '\n';
 	}
@@ -50,18 +58,17 @@ private:
 	int _id;
 };
 
-// Wrapper class.
-class Image
+class ImageProxy : public Image
 {
 public:
-	~Image()
+	~ImageProxy()
 	{
 		if (_realImg) {
 			--_next;
 		}
 	}
 
-	void Draw() noexcept
+	void Draw() noexcept override
 	{
 		// Real object is created after first request.
 		if (!_realImg) {
@@ -74,7 +81,7 @@ public:
 private:
 	static int _next;
 
-	std::unique_ptr<RealImage> _realImg;
+	std::unique_ptr<Image> _realImg;
 };
 
 } // namespace structural

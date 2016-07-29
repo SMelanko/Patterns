@@ -18,9 +18,24 @@
 
 #include <UnitTest++/UnitTest++.h>
 
+#include <algorithm>
 #include <array>
 
 #include <include/gsl_util.h>
+
+constexpr size_t imageArraySize = 5;
+using ImagePtr = std::shared_ptr<pattern::structural::Image>;
+using ImageArray = std::array<ImagePtr, imageArraySize>;
+
+ImageArray InitImgArray()
+{
+	ImageArray imgs;
+	for (size_t i = 0; i < imageArraySize; ++i) {
+		imgs[i] = std::make_shared<pattern::structural::ImageProxy>();
+	}
+
+	return imgs;
+}
 
 SUITE(ProxyTest)
 {
@@ -28,26 +43,24 @@ SUITE(ProxyTest)
 	{
 		auto _ = gsl::finally([]() { std::cout << std::endl << std::endl; });
 
-		constexpr size_t size = 5;
-		std::array<pattern::structural::Image, size> images;
+		auto images = InitImgArray();
 
-		for (size_t i = 0; i < size; ++i) {
+		for (size_t i = 0; i < imageArraySize; ++i) {
 			if (i % 2 == 0) {
 				continue;
 			}
 
-			images[i].Draw();
+			images[i]->Draw();
 		}
 	}
 
 	TEST(ProxyAllImgTest)
 	{
-		constexpr size_t size = 5;
-		std::array<pattern::structural::Image, size> images;
+		auto images = InitImgArray();
 
-		for (size_t i = 0; i < size; ++i) {
-			images[i].Draw();
-		}
+		std::for_each(std::begin(images), std::end(images), [](ImagePtr image) {
+			image->Draw();
+		});
 	}
 }
 

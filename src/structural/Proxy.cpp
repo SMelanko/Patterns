@@ -22,7 +22,7 @@ namespace pattern
 namespace structural
 {
 
-int Image::_next = 1;
+int ImageProxy::_next = 1;
 
 } // namespace structural
 } // namespace pattern
