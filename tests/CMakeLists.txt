@@ -40,6 +40,10 @@ function(AppendStructuralPatternTest name)
         PatternTestImpl(structural ${name})
 endfunction()
 
+function(AppendBehavioralPatternTest name)
+        PatternTestImpl(behavioral ${name})
+endfunction()
+
 AppendCreationalPatternTest(AbstractFactory)
 AppendCreationalPatternTest(Builder)
 AppendCreationalPatternTest(FactoryMethod)
@@ -54,3 +58,5 @@ AppendStructuralPatternTest(Decorator)
 AppendStructuralPatternTest(Facade)
 AppendStructuralPatternTest(Flyweight)
 AppendStructuralPatternTest(Proxy)
+
+AppendBehavioralPatternTest(ChainOfResponsibility)
