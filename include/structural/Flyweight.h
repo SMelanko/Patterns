@@ -21,6 +21,7 @@
 #define PATTERN_STRUCTURAL_FLYWEIGHT_H
 
 #include <algorithm>
+#include <array>
 #include <iostream>
 #include <memory>
 #include <string>
