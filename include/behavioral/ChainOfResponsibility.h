@@ -51,7 +51,9 @@ public:
 
 	virtual void Handle(int i) const noexcept
 	{
-		_next->Handle(i);
+		if (_next) {
+			_next->Handle(i);
+		}
 	}
 
 private:
