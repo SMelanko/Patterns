@@ -21,27 +21,27 @@ else ()
 endif ()
 
 function(PatternTestImpl class name)
-        set(test_name ${name}Tests)
-        add_executable(${test_name}
-                ${Patterns_HEADERS}
-                ../src/${class}/${name}.cpp
-                ${test_name}.cpp
-        )
-        target_link_libraries(${test_name} UnitTest++)
-        install(TARGETS ${test_name} RUNTIME DESTINATION bin)
-        add_test(${test_name} ${test_name})
+	set(test_name ${name}Tests)
+	add_executable(${test_name}
+		${Patterns_HEADERS}
+		../src/${class}/${name}.cpp
+		${test_name}.cpp
+	)
+	target_link_libraries(${test_name} UnitTest++)
+	install(TARGETS ${test_name} RUNTIME DESTINATION bin)
+	add_test(${test_name} ${test_name})
 endfunction()
 
 function(AppendCreationalPatternTest name)
-        PatternTestImpl(creational ${name})
+	PatternTestImpl(creational ${name})
 endfunction()
 
 function(AppendStructuralPatternTest name)
-        PatternTestImpl(structural ${name})
+	PatternTestImpl(structural ${name})
 endfunction()
 
 function(AppendBehavioralPatternTest name)
-        PatternTestImpl(behavioral ${name})
+	PatternTestImpl(behavioral ${name})
 endfunction()
 
 AppendCreationalPatternTest(AbstractFactory)
@@ -60,3 +60,6 @@ AppendStructuralPatternTest(Flyweight)
 AppendStructuralPatternTest(Proxy)
 
 AppendBehavioralPatternTest(ChainOfResponsibility)
+AppendBehavioralPatternTest(Observer)
+AppendBehavioralPatternTest(Strategy)
+
