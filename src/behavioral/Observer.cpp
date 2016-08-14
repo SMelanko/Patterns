@@ -16,23 +16,29 @@
 
 #include "behavioral/Observer.h"
 
+#include <algorithm>
+#include <ios>
+#include <iostream>
+
 namespace pattern
 {
 namespace behavioral
 {
 
-void Subject::Attach(ObserverPtr obs)
+void Subject::Attach(ObserverShPtr obs)
 {
 	_views.push_back(obs);
 }
 
-void Subject::Detach(const ObserverPtr obs)
+void Subject::Detach(const ObserverShPtr obs)
 {
-	auto func = [obs](const ObserverPtr o) { return o == obs; };
-	auto it = std::find_if(std::cbegin(_views), std::cend(_views), func);
-	if (it != std::cend(_views)) {
-		_views.erase(it);
-	}
+	// Removes observer from the list.
+	auto func = [obs](ObserverWeakPtr wptr) {
+		auto sptr = wptr.lock();
+		return (sptr) ? sptr.get() == obs.get() : false;
+	};
+
+	Remove(func);
 }
 
 void Subject::SetVal(const int val)
@@ -41,11 +47,28 @@ void Subject::SetVal(const int val)
 	Notify();
 }
 
-void Subject::Notify() const noexcept
+void Subject::Notify() noexcept
 {
+	bool clear = false;
 	for (const auto& view : _views) {
-		view->Update(*this);
+		auto observer = view.lock();
+		if (observer) {
+			observer->Update(*this);
+		} else {
+			clear = true;
+		}
 	}
+
+	if (clear) {
+		// Removes observer from the list which is dangle.
+		Remove([](ObserverWeakPtr obs) { return obs.lock() == nullptr; });
+	}
+}
+
+void Subject::Remove(std::function<bool (ObserverWeakPtr)> func)
+{
+	auto it = std::remove_if(std::begin(_views), std::end(_views), func);
+	_views.erase(it, _views.end());
 }
 
 void BinObserver::Update(const Subject& subj) const noexcept

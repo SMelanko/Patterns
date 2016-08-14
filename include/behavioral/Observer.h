@@ -19,8 +19,7 @@
 #ifndef PATTERNS_OBSERVER_H
 #define PATTERNS_OBSERVER_H
 
-#include <ios>
-#include <iostream>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -43,8 +42,9 @@ public:
 	virtual void Update(const Subject& sub) const noexcept = 0;
 };
 
-using ObserverPtr = Observer*;
-using ObserverPtrVector = std::vector<ObserverPtr>;
+using ObserverWeakPtr = std::weak_ptr<Observer>;
+using ObserverShPtr = std::shared_ptr<Observer>;
+using ObserverPtrVector = std::vector<ObserverWeakPtr>;
 
 //
 // Subject.
@@ -53,12 +53,12 @@ using ObserverPtrVector = std::vector<ObserverPtr>;
 class Subject
 {
 public:
-	void Attach(ObserverPtr obs);
+	void Attach(ObserverShPtr obs);
 	auto Count() const noexcept
 	{
 		return _views.size();
 	}
-	void Detach(const ObserverPtr obs);
+	void Detach(const ObserverShPtr obs);
 
 	inline auto GetVal() const noexcept
 	{
@@ -66,12 +66,16 @@ public:
 	}
 	void SetVal(const int val);
 
-	void Notify() const noexcept;
+	void Notify() noexcept;
+
+private:
+	void Remove(std::function<bool (ObserverWeakPtr)> func);
 
 private:
 	ObserverPtrVector _views;
-
+	// Here should be data members.
 	int _val;
+	// ...
 };
 
 //
@@ -81,33 +85,18 @@ private:
 class BinObserver : public Observer
 {
 public:
-	BinObserver(Subject& subj)
-	{
-		subj.Attach(this);
-	}
-
 	void Update(const Subject& subj) const noexcept override;
 };
 
 class OctObserver : public Observer
 {
 public:
-	OctObserver(Subject& subj)
-	{
-		subj.Attach(this);
-	}
-
 	void Update(const Subject& subj) const noexcept override;
 };
 
 class HexObserver : public Observer
 {
 public:
-	HexObserver(Subject& subj)
-	{
-		subj.Attach(this);
-	}
-
 	void Update(const Subject& subj) const noexcept override;
 };
 

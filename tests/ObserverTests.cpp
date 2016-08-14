@@ -18,6 +18,8 @@
 
 #include <UnitTest++/UnitTest++.h>
 
+#include <iostream>
+
 using pattern::behavioral::Subject;
 using pattern::behavioral::BinObserver;
 using pattern::behavioral::OctObserver;
@@ -28,42 +30,68 @@ SUITE(ObserverTest)
 	TEST(AllNumConvertTest)
 	{
 		Subject subj;
-		BinObserver bin{ subj };
-		OctObserver oct{ subj };
-		HexObserver hex{ subj };
+		auto bin = std::make_shared<BinObserver>();
+		subj.Attach(bin);
+		auto oct = std::make_shared<OctObserver>();
+		subj.Attach(oct);
+		auto hex = std::make_shared<HexObserver>();
+		subj.Attach(hex);
 		CHECK(subj.Count() == 3);
-		subj.SetVal(11);
+		subj.SetVal(10);
 		std::cout << std::endl;
 	}
 
 	TEST(NumConvertWithDetachTest)
 	{
 		Subject subj;
-		BinObserver bin{ subj };
-		OctObserver oct{ subj };
-		HexObserver hex{ subj };
+		auto bin = std::make_shared<BinObserver>();
+		subj.Attach(bin);
+		auto oct = std::make_shared<OctObserver>();
+		subj.Attach(oct);
+		auto hex = std::make_shared<HexObserver>();
+		subj.Attach(hex);
 		CHECK(subj.Count() == 3);
-		subj.SetVal(10);
-		subj.Detach(&bin);
-		CHECK(subj.Count() == 2);
 		subj.SetVal(20);
+		subj.Detach(bin);
+		CHECK(subj.Count() == 2);
+		subj.SetVal(30);
 		std::cout << std::endl;
 	}
 
 	TEST(NumConvertWith2DetachTest)
 	{
 		Subject subj;
-		BinObserver bin{ subj };
-		OctObserver oct{ subj };
-		HexObserver hex{ subj };
+		auto bin = std::make_shared<BinObserver>();
+		subj.Attach(bin);
+		auto oct = std::make_shared<OctObserver>();
+		subj.Attach(oct);
+		auto hex = std::make_shared<HexObserver>();
+		subj.Attach(hex);
 		CHECK(subj.Count() == 3);
-		subj.SetVal(7);
-		subj.Detach(&bin);
+		subj.SetVal(50);
+		subj.Detach(bin);
 		CHECK(subj.Count() == 2);
-		subj.Detach(&bin);
+		subj.Detach(bin);
 		CHECK(subj.Count() == 2);
-		subj.SetVal(33);
+		subj.SetVal(60);
 		std::cout << std::endl;
+	}
+
+	TEST(OneObserverIsBeingRemovedTest)
+	{
+		Subject subj;
+		auto bin = std::make_shared<BinObserver>();
+		subj.Attach(bin);
+		{
+			auto oct = std::make_shared<OctObserver>();
+			subj.Attach(oct);
+			CHECK(subj.Count() == 2);
+			oct.reset();
+		}
+		CHECK(subj.Count() == 2);
+		subj.SetVal(70);
+		CHECK(subj.Count() == 1);
+		std::cout << subj.Count() << std::endl;
 	}
 }
 
