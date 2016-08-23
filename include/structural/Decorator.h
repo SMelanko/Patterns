@@ -27,6 +27,10 @@ namespace pattern
 namespace structural
 {
 
+///
+/// Example #1
+///
+
 //
 // Interface.
 //
@@ -137,6 +141,117 @@ public:
 	{
 		Decorator::DoIt();
 		std::cout << " + Z";
+	}
+};
+
+///
+/// Example #2.
+///
+
+class Beverage
+{
+public:
+	Beverage() = default;
+	explicit Beverage(const std::string& desc)
+		: _description{ desc }
+	{
+	}
+	virtual ~Beverage() = default;
+
+	virtual double Cost() const noexcept = 0;
+	virtual std::string GetDescription() const noexcept
+	{
+		return _description;
+	}
+
+private:
+	std::string _description = "Unknown Beverage";
+};
+
+using BeveragePtr = std::shared_ptr<Beverage>;
+
+class DarkRoast : public Beverage
+{
+public:
+	DarkRoast()
+		: Beverage{ "Dark Roast" }
+	{
+	}
+
+	double Cost() const noexcept override
+	{
+		return 1.69;
+	}
+};
+
+class Espresso : public Beverage
+{
+public:
+	Espresso()
+		: Beverage{ "Espresso" }
+	{
+	}
+
+	double Cost() const noexcept override
+	{
+		return 1.99;
+	}
+};
+
+class CondimentDecorator : public Beverage
+{
+public:
+	explicit CondimentDecorator(BeveragePtr comp)
+		: _comp{ comp }
+	{
+	}
+
+	double Cost() const noexcept override
+	{
+		return _comp->Cost();
+	}
+	std::string GetDescription() const noexcept override
+	{
+		return _comp->GetDescription();
+	}
+
+private:
+	BeveragePtr _comp;
+};
+
+class Milk : public CondimentDecorator
+{
+public:
+	explicit Milk(BeveragePtr comp)
+		: CondimentDecorator{ comp }
+	{
+	}
+
+	double Cost() const noexcept override
+	{
+		return CondimentDecorator::Cost() + 0.3;
+	}
+	std::string GetDescription() const noexcept override
+	{
+		return CondimentDecorator::GetDescription() + ", Milk";
+	}
+};
+
+class Mocha : public CondimentDecorator
+{
+public:
+	explicit Mocha(BeveragePtr comp)
+		: CondimentDecorator{ comp }
+	{
+	}
+
+	double Cost() const noexcept override
+	{
+		return CondimentDecorator::Cost() + 0.4;
+	}
+	std::string GetDescription() const noexcept override
+	{
+		return CondimentDecorator::GetDescription() + ", Mocha";
 	}
 };
 

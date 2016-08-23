@@ -24,30 +24,61 @@ using InterfacePtr = std::unique_ptr<pattern::structural::Interface>;
 
 SUITE(DecoratorTest)
 {
-	TEST(DecorTest)
+	TEST(DecoratorXTest)
 	{
 		auto _ = gsl::finally([] { std::cout << std::endl; });
 
 		InterfacePtr x{
 			new pattern::structural::X{
 				std::make_shared<pattern::structural::Core>() } };
+		x->DoIt();
+		std::cout << std::endl;
+	}
+
+	TEST(DecoratorXYTest)
+	{
+		auto _ = gsl::finally([] { std::cout << std::endl; });
+
 		InterfacePtr xy{
 			new pattern::structural::Y{
 				std::make_shared<pattern::structural::X>(
 					std::make_shared<pattern::structural::Core>()) } };
+		xy->DoIt();
+		std::cout << std::endl;
+	}
+
+	TEST(DecoratorXYZTest)
+	{
+		auto _ = gsl::finally([] { std::cout << std::endl; });
+
 		InterfacePtr xyz{
 			new pattern::structural::Z{
 				std::make_shared<pattern::structural::Y>(
 					std::make_shared<pattern::structural::X>(
 						std::make_shared<pattern::structural::Core>())) } };
-
-		std::cout << std::endl;
-		x->DoIt();
-		std::cout << std::endl;
-		xy->DoIt();
-		std::cout << std::endl;
 		xyz->DoIt();
-		std::cout << std::endl << std::endl;
+		std::cout << std::endl;
+	}
+
+	TEST(DarkRoastWithMilkAndMochaTest)
+	{
+		pattern::structural::BeveragePtr beverage =
+			std::make_shared<pattern::structural::DarkRoast>();
+		beverage = std::make_shared<pattern::structural::Milk>(beverage);
+		beverage = std::make_shared<pattern::structural::Mocha>(beverage);
+		std::cout << beverage->Cost() << "$\t"
+			<< beverage->GetDescription() << std::endl << std::endl;
+	}
+
+	TEST(DarkRoastWithDoubleMilkAndMochaTest)
+	{
+		pattern::structural::BeveragePtr beverage =
+			std::make_shared<pattern::structural::DarkRoast>();
+		beverage = std::make_shared<pattern::structural::Milk>(beverage);
+		beverage = std::make_shared<pattern::structural::Milk>(beverage);
+		beverage = std::make_shared<pattern::structural::Mocha>(beverage);
+		std::cout << beverage->Cost() << "$\t"
+			<< beverage->GetDescription() << std::endl << std::endl;
 	}
 }
 
