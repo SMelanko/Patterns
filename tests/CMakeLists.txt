@@ -60,6 +60,7 @@ AppendStructuralPatternTest(Flyweight)
 AppendStructuralPatternTest(Proxy)
 
 AppendBehavioralPatternTest(ChainOfResponsibility)
+AppendBehavioralPatternTest(Command)
 AppendBehavioralPatternTest(Observer)
 AppendBehavioralPatternTest(Strategy)
 
