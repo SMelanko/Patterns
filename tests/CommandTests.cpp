@@ -29,11 +29,18 @@ using pattern::behavioral::GarageDoorCloseCommand;
 using pattern::behavioral::LightOnCommand;
 using pattern::behavioral::LightOffCommand;
 
-void TestButtons(RemoteControlPtr remote, const size_t slot)
-{
+#define CHECK_ON_BUTTON(remote, slot) \
 	remote->OnButtonWasPressed(slot);
-	std::cout << '\t';
+#define CHECK_OFF_BUTTON(remote, slot) \
 	remote->OffButtonWasPressed(slot);
+
+template<typename T,
+	typename Dummy = typename std::enable_if<std::is_integral<T>::value>::type>
+static void TestButtons(RemoteControlPtr remote, const T slot)
+{
+	CHECK_ON_BUTTON(remote, slot)
+	std::cout << '\t';
+	CHECK_OFF_BUTTON(remote, slot)
 	std::cout << '\n';
 }
 
@@ -46,8 +53,9 @@ SUITE(CommandTest)
 		CommandPtr lightOn = std::make_shared<LightOnCommand>(light);
 		CommandPtr lightOff = std::make_shared<LightOffCommand>(light);
 
-		remote->SetCommand(0, lightOn, lightOff);
-		TestButtons(remote, 0);
+		constexpr size_t slot = 0;
+		remote->SetCommand(slot, lightOn, lightOff);
+		TestButtons(remote, slot);
 	}
 
 	TEST(GarageDoorTest)
@@ -57,8 +65,9 @@ SUITE(CommandTest)
 		CommandPtr gdOpen = std::make_shared<GarageDoorOpenCommand>(gd);
 		CommandPtr gdClose = std::make_shared<GarageDoorCloseCommand>(gd);
 
-		remote->SetCommand(0, gdOpen, gdClose);
-		TestButtons(remote, 0);
+		constexpr size_t slot = 0;
+		remote->SetCommand(slot, gdOpen, gdClose);
+		TestButtons(remote, slot);
 	}
 }
 
