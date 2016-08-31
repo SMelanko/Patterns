@@ -22,26 +22,31 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace pattern
 {
 namespace behavioral
 {
 
+//
+// Receiver.
+//
+
 class GarageDoor
 {
 public:
-	void Down()
+	void Down() const noexcept
 	{
-		std::cout << "GarageDoor: Door is Down." << std::endl;
+		std::cout << "GarageDoor::Down";
 	}
-	void Stop()
+	void Stop() const noexcept
 	{
-		std::cout << "GarageDoor: Door is Stop." << std::endl;
+		std::cout << "GarageDoor::Stop";
 	}
-	void Up()
+	void Up() const noexcept
 	{
-		std::cout << "GarageDoor: Door is Up." << std::endl;
+		std::cout << "GarageDoor::Up";
 	}
 };
 
@@ -50,13 +55,21 @@ using GarageDoorPtr = std::shared_ptr<GarageDoor>;
 class Light
 {
 public:
-	void On()
+	void On() const noexcept
 	{
-		std::cout << "Light: Light is On." << std::endl;
+		std::cout << "Light::On";
+	}
+	void Off() const noexcept
+	{
+		std::cout << "Light::Off";
 	}
 };
 
 using LightPtr = std::shared_ptr<Light>;
+
+//
+// Command.
+//
 
 class Command
 {
@@ -67,6 +80,18 @@ public:
 };
 
 using CommandPtr = std::shared_ptr<Command>;
+
+//
+// Concrete command.
+//
+
+class NoCommand : public Command
+{
+public:
+	void Execute() override
+	{
+	}
+};
 
 class LightOnCommand : public Command
 {
@@ -79,6 +104,23 @@ public:
 	void Execute() override
 	{
 		_light->On();
+	}
+
+private:
+	LightPtr _light;
+};
+
+class LightOffCommand : public Command
+{
+public:
+	explicit LightOffCommand(const LightPtr light)
+		: _light{ light }
+	{
+	}
+
+	void Execute() override
+	{
+		_light->Off();
 	}
 
 private:
@@ -102,22 +144,65 @@ private:
 	GarageDoorPtr _garageDoor;
 };
 
-class SimpleRemoteControl
+class GarageDoorCloseCommand : public Command
 {
 public:
-	void ButtonWasPressed()
+	explicit GarageDoorCloseCommand(const GarageDoorPtr garageDoor)
+		: _garageDoor{ garageDoor }
 	{
-		_slot->Execute();
 	}
 
-	void SetCommand(const CommandPtr command) noexcept
+	void Execute() override
 	{
-		_slot = command;
+		_garageDoor->Down();
 	}
 
 private:
-	CommandPtr _slot;
+	GarageDoorPtr _garageDoor;
 };
+
+//
+// Invoker.
+//
+
+class RemoteControl
+{
+	using CommandPtrArray = std::vector<CommandPtr>;
+
+public:
+	RemoteControl() noexcept
+	{
+		constexpr int size = 7;
+		_onCommands.resize(size);
+		_offCommands.resize(size);
+		CommandPtr noCommand = std::make_shared<NoCommand>();
+		std::fill(std::begin(_onCommands), std::end(_onCommands), noCommand);
+		std::fill(std::begin(_offCommands), std::end(_offCommands), noCommand);
+	}
+
+	void OnButtonWasPressed(const size_t slot)
+	{
+		_onCommands[slot]->Execute();
+	}
+
+	void OffButtonWasPressed(const size_t slot)
+	{
+		_offCommands[slot]->Execute();
+	}
+
+	void SetCommand(const size_t slot,
+		const CommandPtr onCommand, const CommandPtr offCommand)
+	{
+		_onCommands[slot] = onCommand;
+		_offCommands[slot] = offCommand;
+	}
+
+private:
+	CommandPtrArray _onCommands;
+	CommandPtrArray _offCommands;
+};
+
+using RemoteControlPtr = std::shared_ptr<RemoteControl>;
 
 } // namespace behavioral
 } // namespace pattern

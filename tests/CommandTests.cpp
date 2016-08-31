@@ -18,34 +18,47 @@
 
 #include <UnitTest++/UnitTest++.h>
 
-using pattern::behavioral::SimpleRemoteControl;
+using pattern::behavioral::RemoteControl;
+using pattern::behavioral::RemoteControlPtr;
 using pattern::behavioral::GarageDoor;
 using pattern::behavioral::Light;
 using pattern::behavioral::Command;
 using pattern::behavioral::CommandPtr;
 using pattern::behavioral::GarageDoorOpenCommand;
+using pattern::behavioral::GarageDoorCloseCommand;
 using pattern::behavioral::LightOnCommand;
+using pattern::behavioral::LightOffCommand;
+
+void TestButtons(RemoteControlPtr remote, const size_t slot)
+{
+	remote->OnButtonWasPressed(slot);
+	std::cout << '\t';
+	remote->OffButtonWasPressed(slot);
+	std::cout << '\n';
+}
 
 SUITE(CommandTest)
 {
-	TEST(LightOnTest)
+	TEST(LightTest)
 	{
-		auto remote = std::make_unique<SimpleRemoteControl>();
+		auto remote = std::make_shared<RemoteControl>();
 		auto light = std::make_shared<Light>();
 		CommandPtr lightOn = std::make_shared<LightOnCommand>(light);
+		CommandPtr lightOff = std::make_shared<LightOffCommand>(light);
 
-		remote->SetCommand(lightOn);
-		remote->ButtonWasPressed();
+		remote->SetCommand(0, lightOn, lightOff);
+		TestButtons(remote, 0);
 	}
 
-	TEST(GarageDoorOpenTest)
+	TEST(GarageDoorTest)
 	{
-		auto remote = std::make_unique<SimpleRemoteControl>();
+		auto remote = std::make_shared<RemoteControl>();
 		auto gd = std::make_shared<GarageDoor>();
 		CommandPtr gdOpen = std::make_shared<GarageDoorOpenCommand>(gd);
+		CommandPtr gdClose = std::make_shared<GarageDoorCloseCommand>(gd);
 
-		remote->SetCommand(gdOpen);
-		remote->ButtonWasPressed();
+		remote->SetCommand(0, gdOpen, gdClose);
+		TestButtons(remote, 0);
 	}
 }
 
