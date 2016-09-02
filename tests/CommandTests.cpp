@@ -110,6 +110,16 @@ SUITE(CommandTest)
 			TestButtons(remote, i);
 		}
 	}
+
+	TEST(UndoTest)
+	{
+		auto remote = std::make_shared<RemoteControl>();
+		SetGarageDoorCommands(remote);
+		TestButtons(remote);
+		std::cout << "Undo was pressed: ";
+		remote->UndoButtonWasPressed();
+		std::cout << std::endl;
+	}
 }
 
 int main(int, char*[])

@@ -100,6 +100,7 @@ public:
 	virtual ~Command() noexcept = default;
 
 	virtual void Execute() = 0;
+	virtual void Undo() = 0;
 };
 
 using CommandPtr = std::shared_ptr<Command>;
@@ -112,6 +113,9 @@ class NoCommand : public Command
 {
 public:
 	void Execute() override
+	{
+	}
+	void Undo() override
 	{
 	}
 };
@@ -127,6 +131,10 @@ public:
 	void Execute() override
 	{
 		_light->On();
+	}
+	void Undo() override
+	{
+		_light->Off();
 	}
 
 private:
@@ -145,6 +153,10 @@ public:
 	{
 		_light->Off();
 	}
+	void Undo() override
+	{
+		_light->On();
+	}
 
 private:
 	LightPtr _light;
@@ -162,6 +174,10 @@ public:
 	{
 		_garageDoor->Up();
 	}
+	void Undo() override
+	{
+		_garageDoor->Down();
+	}
 
 private:
 	GarageDoorPtr _garageDoor;
@@ -178,6 +194,10 @@ public:
 	void Execute() override
 	{
 		_garageDoor->Down();
+	}
+	void Undo() override
+	{
+		_garageDoor->Up();
 	}
 
 private:
@@ -198,6 +218,10 @@ public:
 		_stereo->SetCD();
 		_stereo->SetVolume(10);
 	}
+	void Undo() override
+	{
+		_stereo->Off();
+	}
 
 private:
 	StereoPtr _stereo;
@@ -214,6 +238,12 @@ public:
 	void Execute() override
 	{
 		_stereo->Off();
+	}
+	void Undo() override
+	{
+		_stereo->On();
+		_stereo->SetCD();
+		_stereo->SetVolume(10);
 	}
 
 private:
@@ -237,16 +267,22 @@ public:
 		CommandPtr noCommand = std::make_shared<NoCommand>();
 		std::fill(std::begin(_onCommands), std::end(_onCommands), noCommand);
 		std::fill(std::begin(_offCommands), std::end(_offCommands), noCommand);
+		_undoCommand = noCommand;
 	}
 
 	void OnButtonWasPressed(const size_t slot)
 	{
 		_onCommands[slot]->Execute();
+		_undoCommand = _onCommands[slot];
 	}
-
 	void OffButtonWasPressed(const size_t slot)
 	{
 		_offCommands[slot]->Execute();
+		_undoCommand = _offCommands[slot];
+	}
+	void UndoButtonWasPressed()
+	{
+		_undoCommand->Undo();
 	}
 
 	void SetCommand(const size_t slot,
@@ -259,6 +295,7 @@ public:
 private:
 	CommandPtrArray _onCommands;
 	CommandPtrArray _offCommands;
+	CommandPtr _undoCommand;
 };
 
 using RemoteControlPtr = std::shared_ptr<RemoteControl>;
