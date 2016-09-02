@@ -67,6 +67,29 @@ public:
 
 using LightPtr = std::shared_ptr<Light>;
 
+class Stereo
+{
+public:
+	void On() const noexcept
+	{
+		std::cout << "Stereo::On";
+	}
+	void Off() const noexcept
+	{
+		std::cout << "Stereo::Off";
+	}
+	void SetCD() const noexcept
+	{
+		std::cout << "Stereo::SetCD";
+	}
+	void SetVolume(const uint16_t val) const noexcept
+	{
+		std::cout << "Stereo::SetVolume " << val;
+	}
+};
+
+using StereoPtr = std::shared_ptr<Stereo>;
+
 //
 // Command.
 //
@@ -159,6 +182,42 @@ public:
 
 private:
 	GarageDoorPtr _garageDoor;
+};
+
+class StereoOnWithCDCommand : public Command
+{
+public:
+	explicit StereoOnWithCDCommand(const StereoPtr stereo)
+		: _stereo{ stereo }
+	{
+	}
+
+	void Execute() override
+	{
+		_stereo->On();
+		_stereo->SetCD();
+		_stereo->SetVolume(10);
+	}
+
+private:
+	StereoPtr _stereo;
+};
+
+class StereoOffCommand : public Command
+{
+public:
+	explicit StereoOffCommand(const StereoPtr stereo)
+		: _stereo{ stereo }
+	{
+	}
+
+	void Execute() override
+	{
+		_stereo->Off();
+	}
+
+private:
+	StereoPtr _stereo;
 };
 
 //
