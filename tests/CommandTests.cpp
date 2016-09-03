@@ -20,11 +20,16 @@
 
 using pattern::behavioral::RemoteControl;
 using pattern::behavioral::RemoteControlPtr;
+using pattern::behavioral::CeilingFan;
 using pattern::behavioral::GarageDoor;
 using pattern::behavioral::Light;
 using pattern::behavioral::Stereo;
 using pattern::behavioral::Command;
 using pattern::behavioral::CommandPtr;
+using pattern::behavioral::CeilingFanLowCommand;
+using pattern::behavioral::CeilingFanMediumCommand;
+using pattern::behavioral::CeilingFanHighCommand;
+using pattern::behavioral::CeilingFanOffCommand;
 using pattern::behavioral::GarageDoorOpenCommand;
 using pattern::behavioral::GarageDoorCloseCommand;
 using pattern::behavioral::LightOnCommand;
@@ -47,13 +52,17 @@ static void TestButtons(RemoteControlPtr remote, const T slot = 0U)
 	std::cout << '\n';
 }
 
-void SetLightCommands(RemoteControlPtr remote, const size_t slot = 0)
+void SetCeilingFanCommands(RemoteControlPtr remote, size_t slot = 0)
 {
-	auto light = std::make_shared<Light>();
-	CommandPtr lightOn = std::make_shared<LightOnCommand>(light);
-	CommandPtr lightOff = std::make_shared<LightOffCommand>(light);
+	auto cf = std::make_shared<CeilingFan>();
+	CommandPtr cfLow = std::make_shared<CeilingFanLowCommand>(cf);
+	CommandPtr cfMed = std::make_shared<CeilingFanMediumCommand>(cf);
+	CommandPtr cfHigh = std::make_shared<CeilingFanHighCommand>(cf);
+	CommandPtr cfOff = std::make_shared<CeilingFanOffCommand>(cf);
 
-	remote->SetCommand(slot, lightOn, lightOff);
+	remote->SetCommand(slot++, cfLow, cfOff);
+	remote->SetCommand(slot++, cfMed, cfOff);
+	remote->SetCommand(slot++, cfHigh, cfOff);
 }
 
 void SetGarageDoorCommands(RemoteControlPtr remote, const size_t slot = 0)
@@ -63,6 +72,15 @@ void SetGarageDoorCommands(RemoteControlPtr remote, const size_t slot = 0)
 	CommandPtr gdClose = std::make_shared<GarageDoorCloseCommand>(gd);
 
 	remote->SetCommand(slot, gdOpen, gdClose);
+}
+
+void SetLightCommands(RemoteControlPtr remote, const size_t slot = 0)
+{
+	auto light = std::make_shared<Light>();
+	CommandPtr lightOn = std::make_shared<LightOnCommand>(light);
+	CommandPtr lightOff = std::make_shared<LightOffCommand>(light);
+
+	remote->SetCommand(slot, lightOn, lightOff);
 }
 
 void SetStereoCommands(RemoteControlPtr remote, const size_t slot = 0)
@@ -76,6 +94,34 @@ void SetStereoCommands(RemoteControlPtr remote, const size_t slot = 0)
 
 SUITE(CommandTest)
 {
+	TEST(CeilingFanTest)
+	{
+		auto remote = std::make_shared<RemoteControl>(3);
+		auto cf = std::make_shared<CeilingFan>();
+		CommandPtr cfLow = std::make_shared<CeilingFanLowCommand>(cf);
+		CommandPtr cfMed = std::make_shared<CeilingFanMediumCommand>(cf);
+		CommandPtr cfHigh = std::make_shared<CeilingFanHighCommand>(cf);
+		CommandPtr cfOff = std::make_shared<CeilingFanOffCommand>(cf);
+
+		size_t slot = 0;
+		remote->SetCommand(slot++, cfLow, cfOff);
+		remote->SetCommand(slot++, cfMed, cfOff);
+		remote->SetCommand(slot++, cfHigh, cfOff);
+
+		remote->OnButtonWasPressed(0);
+		CHECK(cf->GetSpeed() == CeilingFan::Speed::Low);
+		remote->OffButtonWasPressed(0);
+		CHECK(cf->GetSpeed() == CeilingFan::Speed::Off);
+		remote->UndoButtonWasPressed();
+		CHECK(cf->GetSpeed() == CeilingFan::Speed::Low);
+		remote->OnButtonWasPressed(1);
+		CHECK(cf->GetSpeed() == CeilingFan::Speed::Medium);
+		remote->OnButtonWasPressed(2);
+		CHECK(cf->GetSpeed() == CeilingFan::Speed::High);
+		remote->UndoButtonWasPressed();
+		CHECK(cf->GetSpeed() == CeilingFan::Speed::Medium);
+	}
+
 	TEST(LightTest)
 	{
 		auto remote = std::make_shared<RemoteControl>();
@@ -99,7 +145,7 @@ SUITE(CommandTest)
 
 	TEST(AllTest)
 	{
-		auto remote = std::make_shared<RemoteControl>();
+		auto remote = std::make_shared<RemoteControl>(3);
 
 		size_t slot = 0;
 		SetLightCommands(remote, slot++);

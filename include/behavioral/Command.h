@@ -33,6 +33,39 @@ namespace behavioral
 // Receiver.
 //
 
+class CeilingFan
+{
+public:
+	enum class Speed
+	{
+		Off,
+		Low,
+		Medium,
+		High
+	};
+
+public:
+	CeilingFan() noexcept = default;
+
+	auto GetSpeed() const noexcept
+	{
+		return _speed;
+	}
+	void SetSpeed(const Speed speed) noexcept
+	{
+		_speed = speed;
+	}
+	void Off() noexcept
+	{
+		SetSpeed(Speed::Off);
+	}
+
+private:
+	Speed _speed = Speed::Off;
+};
+
+using CeilingFanPtr = std::shared_ptr<CeilingFan>;
+
 class GarageDoor
 {
 public:
@@ -99,8 +132,8 @@ class Command
 public:
 	virtual ~Command() noexcept = default;
 
-	virtual void Execute() = 0;
-	virtual void Undo() = 0;
+	virtual void Execute() noexcept = 0;
+	virtual void Undo() noexcept = 0;
 };
 
 using CommandPtr = std::shared_ptr<Command>;
@@ -112,27 +145,151 @@ using CommandPtr = std::shared_ptr<Command>;
 class NoCommand : public Command
 {
 public:
-	void Execute() override
+	void Execute() noexcept override
 	{
 	}
-	void Undo() override
+	void Undo() noexcept override
 	{
 	}
+};
+
+class CeilingFanCommand : public Command
+{
+public:
+	explicit CeilingFanCommand(const CeilingFanPtr ceilingFan) noexcept
+		: _ceilingFan{ ceilingFan }
+	{
+	}
+	virtual ~CeilingFanCommand() noexcept = default;
+
+	void Undo() noexcept override
+	{
+		_ceilingFan->SetSpeed(_prevSpeed);
+	}
+
+protected:
+	void Exec(const CeilingFan::Speed speed) noexcept
+	{
+		_prevSpeed = _ceilingFan->GetSpeed();
+		_ceilingFan->SetSpeed(speed);
+	}
+
+private:
+	CeilingFanPtr _ceilingFan;
+	CeilingFan::Speed _prevSpeed;
+};
+
+class CeilingFanLowCommand : public CeilingFanCommand
+{
+public:
+	explicit CeilingFanLowCommand(const CeilingFanPtr ceilingFan) noexcept
+		: CeilingFanCommand{ ceilingFan }
+	{
+	}
+
+	void Execute() noexcept override
+	{
+		CeilingFanCommand::Exec(CeilingFan::Speed::Low);
+	}
+};
+
+class CeilingFanMediumCommand : public CeilingFanCommand
+{
+public:
+	explicit CeilingFanMediumCommand(const CeilingFanPtr ceilingFan) noexcept
+		: CeilingFanCommand{ ceilingFan }
+	{
+	}
+
+	void Execute() noexcept override
+	{
+		CeilingFanCommand::Exec(CeilingFan::Speed::Medium);
+	}
+};
+
+class CeilingFanHighCommand : public CeilingFanCommand
+{
+public:
+	explicit CeilingFanHighCommand(const CeilingFanPtr ceilingFan) noexcept
+		: CeilingFanCommand{ ceilingFan }
+	{
+	}
+
+	void Execute() noexcept override
+	{
+		CeilingFanCommand::Exec(CeilingFan::Speed::High);
+	}
+};
+
+class CeilingFanOffCommand : public CeilingFanCommand
+{
+public:
+	explicit CeilingFanOffCommand(const CeilingFanPtr ceilingFan) noexcept
+		: CeilingFanCommand{ ceilingFan }
+	{
+	}
+
+	void Execute() noexcept override
+	{
+		CeilingFanCommand::Exec(CeilingFan::Speed::Off);
+	}
+};
+
+class GarageDoorOpenCommand : public Command
+{
+public:
+	explicit GarageDoorOpenCommand(const GarageDoorPtr door) noexcept
+		: _door{ door }
+	{
+	}
+
+	void Execute() noexcept override
+	{
+		_door->Up();
+	}
+	void Undo() noexcept override
+	{
+		_door->Down();
+	}
+
+private:
+	GarageDoorPtr _door;
+};
+
+class GarageDoorCloseCommand : public Command
+{
+public:
+	explicit GarageDoorCloseCommand(const GarageDoorPtr door) noexcept
+		: _door{ door }
+	{
+	}
+
+	void Execute() noexcept override
+	{
+		_door->Down();
+	}
+	void Undo() noexcept override
+	{
+		_door->Up();
+	}
+
+private:
+	GarageDoorPtr _door;
 };
 
 class LightOnCommand : public Command
 {
 public:
-	explicit LightOnCommand(const LightPtr light)
+	explicit LightOnCommand(const LightPtr light) noexcept
 		: _light{ light }
 	{
 	}
 
-	void Execute() override
+	void Execute() noexcept override
 	{
 		_light->On();
 	}
-	void Undo() override
+	void Undo() noexcept override
 	{
 		_light->Off();
 	}
@@ -144,16 +301,16 @@ private:
 class LightOffCommand : public Command
 {
 public:
-	explicit LightOffCommand(const LightPtr light)
+	explicit LightOffCommand(const LightPtr light) noexcept
 		: _light{ light }
 	{
 	}
 
-	void Execute() override
+	void Execute() noexcept override
 	{
 		_light->Off();
 	}
-	void Undo() override
+	void Undo() noexcept override
 	{
 		_light->On();
 	}
@@ -162,63 +319,21 @@ private:
 	LightPtr _light;
 };
 
-class GarageDoorOpenCommand : public Command
-{
-public:
-	explicit GarageDoorOpenCommand(const GarageDoorPtr garageDoor)
-		: _garageDoor{ garageDoor }
-	{
-	}
-
-	void Execute() override
-	{
-		_garageDoor->Up();
-	}
-	void Undo() override
-	{
-		_garageDoor->Down();
-	}
-
-private:
-	GarageDoorPtr _garageDoor;
-};
-
-class GarageDoorCloseCommand : public Command
-{
-public:
-	explicit GarageDoorCloseCommand(const GarageDoorPtr garageDoor)
-		: _garageDoor{ garageDoor }
-	{
-	}
-
-	void Execute() override
-	{
-		_garageDoor->Down();
-	}
-	void Undo() override
-	{
-		_garageDoor->Up();
-	}
-
-private:
-	GarageDoorPtr _garageDoor;
-};
-
 class StereoOnWithCDCommand : public Command
 {
 public:
-	explicit StereoOnWithCDCommand(const StereoPtr stereo)
+	explicit StereoOnWithCDCommand(const StereoPtr stereo) noexcept
 		: _stereo{ stereo }
 	{
 	}
 
-	void Execute() override
+	void Execute() noexcept override
 	{
 		_stereo->On();
 		_stereo->SetCD();
 		_stereo->SetVolume(10);
 	}
-	void Undo() override
+	void Undo() noexcept override
 	{
 		_stereo->Off();
 	}
@@ -230,16 +345,16 @@ private:
 class StereoOffCommand : public Command
 {
 public:
-	explicit StereoOffCommand(const StereoPtr stereo)
+	explicit StereoOffCommand(const StereoPtr stereo) noexcept
 		: _stereo{ stereo }
 	{
 	}
 
-	void Execute() override
+	void Execute() noexcept override
 	{
 		_stereo->Off();
 	}
-	void Undo() override
+	void Undo() noexcept override
 	{
 		_stereo->On();
 		_stereo->SetCD();
@@ -259,38 +374,14 @@ class RemoteControl
 	using CommandPtrArray = std::vector<CommandPtr>;
 
 public:
-	RemoteControl() noexcept
-	{
-		constexpr int size = 7;
-		_onCommands.resize(size);
-		_offCommands.resize(size);
-		CommandPtr noCommand = std::make_shared<NoCommand>();
-		std::fill(std::begin(_onCommands), std::end(_onCommands), noCommand);
-		std::fill(std::begin(_offCommands), std::end(_offCommands), noCommand);
-		_undoCommand = noCommand;
-	}
+	explicit RemoteControl(const size_t btnRows = 1U) noexcept;
 
-	void OnButtonWasPressed(const size_t slot)
-	{
-		_onCommands[slot]->Execute();
-		_undoCommand = _onCommands[slot];
-	}
-	void OffButtonWasPressed(const size_t slot)
-	{
-		_offCommands[slot]->Execute();
-		_undoCommand = _offCommands[slot];
-	}
-	void UndoButtonWasPressed()
-	{
-		_undoCommand->Undo();
-	}
+	void OnButtonWasPressed(const size_t slot);
+	void OffButtonWasPressed(const size_t slot);
+	void UndoButtonWasPressed();
 
 	void SetCommand(const size_t slot,
-		const CommandPtr onCommand, const CommandPtr offCommand)
-	{
-		_onCommands[slot] = onCommand;
-		_offCommands[slot] = offCommand;
-	}
+		const CommandPtr onCommand, const CommandPtr offCommand);
 
 private:
 	CommandPtrArray _onCommands;
