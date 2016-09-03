@@ -137,6 +137,7 @@ public:
 };
 
 using CommandPtr = std::shared_ptr<Command>;
+using CommandPtrArray = std::vector<CommandPtr>;
 
 //
 // Concrete command.
@@ -365,14 +366,37 @@ private:
 	StereoPtr _stereo;
 };
 
+class MacroCommand : public Command
+{
+public:
+	explicit MacroCommand(CommandPtrArray&& commands) noexcept
+		: _commands{ std::move(commands) }
+	{
+	}
+
+	void Execute() noexcept override
+	{
+		for (auto& command : _commands) {
+			command->Execute();
+		}
+	}
+	void Undo() noexcept override
+	{
+		for (auto& command : _commands) {
+			command->Undo();
+		}
+	}
+
+private:
+	CommandPtrArray _commands;
+};
+
 //
 // Invoker.
 //
 
 class RemoteControl
 {
-	using CommandPtrArray = std::vector<CommandPtr>;
-
 public:
 	explicit RemoteControl(const size_t btnRows = 1U) noexcept;
 

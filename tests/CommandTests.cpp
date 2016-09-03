@@ -36,6 +36,7 @@ using pattern::behavioral::LightOnCommand;
 using pattern::behavioral::LightOffCommand;
 using pattern::behavioral::StereoOnWithCDCommand;
 using pattern::behavioral::StereoOffCommand;
+using pattern::behavioral::MacroCommand;
 
 #define CHECK_ON_BUTTON(remote, slot) \
 	remote->OnButtonWasPressed(slot);
@@ -140,6 +141,23 @@ SUITE(CommandTest)
 	{
 		auto remote = std::make_shared<RemoteControl>();
 		SetStereoCommands(remote);
+		TestButtons(remote);
+	}
+
+	TEST(MacroTest)
+	{
+		auto remote = std::make_shared<RemoteControl>();
+		auto light = std::make_shared<Light>();
+		CommandPtr lightOn = std::make_shared<LightOnCommand>(light);
+		CommandPtr lightOff = std::make_shared<LightOffCommand>(light);
+		auto stereo = std::make_shared<Stereo>();
+		CommandPtr stereoOn = std::make_shared<StereoOnWithCDCommand>(stereo);
+		CommandPtr stereoOff = std::make_shared<StereoOffCommand>(stereo);
+		auto onCommands = { lightOn, stereoOn };
+		CommandPtr macroOn = std::make_shared<MacroCommand>(onCommands);
+		auto offCommands = { lightOff, stereoOff };
+		CommandPtr macroOff = std::make_shared<MacroCommand>(offCommands);
+		remote->SetCommand(0, macroOn, macroOff);
 		TestButtons(remote);
 	}
 
