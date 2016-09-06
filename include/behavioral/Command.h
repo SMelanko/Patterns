@@ -53,6 +53,7 @@ public:
 	}
 	void SetSpeed(const Speed speed) noexcept
 	{
+		std::cout << "CeilingFan::SetSpeed " << static_cast<int>(speed) << " ";
 		_speed = speed;
 	}
 	void Off() noexcept

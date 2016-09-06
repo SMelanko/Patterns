@@ -119,6 +119,7 @@ SUITE(CommandTest)
 		CHECK(cf->GetSpeed() == CeilingFan::Speed::High);
 		remote->UndoButtonWasPressed();
 		CHECK(cf->GetSpeed() == CeilingFan::Speed::Medium);
+		std::cout << std::endl;
 	}
 
 	TEST(GarageDoorTest)
