@@ -21,9 +21,13 @@
 using pattern::behavioral::RemoteControl;
 using pattern::behavioral::RemoteControlPtr;
 using pattern::behavioral::CeilingFan;
+using pattern::behavioral::CeilingFanPtr;
 using pattern::behavioral::GarageDoor;
+using pattern::behavioral::GarageDoorPtr;
 using pattern::behavioral::Light;
+using pattern::behavioral::LightPtr;
 using pattern::behavioral::Stereo;
+using pattern::behavioral::StereoPtr;
 using pattern::behavioral::Command;
 using pattern::behavioral::CommandPtr;
 using pattern::behavioral::CeilingFanLowCommand;
@@ -44,7 +48,7 @@ using pattern::behavioral::MacroCommand;
 	remote->OffButtonWasPressed(slot);
 
 template<typename T = size_t,
-	typename Dummy = typename std::enable_if<std::is_integral<T>::value>::type>
+	typename Dummy = std::enable_if_t<std::is_integral<T>::value>>
 static void TestButtons(RemoteControlPtr remote, const T slot = 0U)
 {
 	CHECK_ON_BUTTON(remote, slot)
@@ -53,9 +57,9 @@ static void TestButtons(RemoteControlPtr remote, const T slot = 0U)
 	std::cout << '\n';
 }
 
-void SetCeilingFanCommands(RemoteControlPtr remote, size_t slot = 0)
+void SetCeilingFanCommands(RemoteControlPtr remote, size_t& slot,
+	CeilingFanPtr cf = std::make_shared<CeilingFan>())
 {
-	auto cf = std::make_shared<CeilingFan>();
 	CommandPtr cfLow = std::make_shared<CeilingFanLowCommand>(cf);
 	CommandPtr cfMed = std::make_shared<CeilingFanMediumCommand>(cf);
 	CommandPtr cfHigh = std::make_shared<CeilingFanHighCommand>(cf);
@@ -66,31 +70,31 @@ void SetCeilingFanCommands(RemoteControlPtr remote, size_t slot = 0)
 	remote->SetCommand(slot++, cfHigh, cfOff);
 }
 
-void SetGarageDoorCommands(RemoteControlPtr remote, const size_t slot = 0)
+void SetGarageDoorCommands(RemoteControlPtr remote, size_t& slot,
+	GarageDoorPtr gd = std::make_shared<GarageDoor>())
 {
-	auto gd = std::make_shared<GarageDoor>();
 	CommandPtr gdOpen = std::make_shared<GarageDoorOpenCommand>(gd);
 	CommandPtr gdClose = std::make_shared<GarageDoorCloseCommand>(gd);
 
-	remote->SetCommand(slot, gdOpen, gdClose);
+	remote->SetCommand(slot++, gdOpen, gdClose);
 }
 
-void SetLightCommands(RemoteControlPtr remote, const size_t slot = 0)
+void SetLightCommands(RemoteControlPtr remote, size_t& slot,
+	LightPtr light = std::make_shared<Light>())
 {
-	auto light = std::make_shared<Light>();
 	CommandPtr lightOn = std::make_shared<LightOnCommand>(light);
 	CommandPtr lightOff = std::make_shared<LightOffCommand>(light);
 
-	remote->SetCommand(slot, lightOn, lightOff);
+	remote->SetCommand(slot++, lightOn, lightOff);
 }
 
-void SetStereoCommands(RemoteControlPtr remote, const size_t slot = 0)
+void SetStereoCommands(RemoteControlPtr remote, size_t& slot,
+	StereoPtr stereo = std::make_shared<Stereo>())
 {
-	auto stereo = std::make_shared<Stereo>();
 	CommandPtr stereoOn = std::make_shared<StereoOnWithCDCommand>(stereo);
 	CommandPtr stereoOff = std::make_shared<StereoOffCommand>(stereo);
 
-	remote->SetCommand(slot, stereoOn, stereoOff);
+	remote->SetCommand(slot++, stereoOn, stereoOff);
 }
 
 SUITE(CommandTest)
@@ -98,16 +102,10 @@ SUITE(CommandTest)
 	TEST(CeilingFanTest)
 	{
 		auto remote = std::make_shared<RemoteControl>(3);
-		auto cf = std::make_shared<CeilingFan>();
-		CommandPtr cfLow = std::make_shared<CeilingFanLowCommand>(cf);
-		CommandPtr cfMed = std::make_shared<CeilingFanMediumCommand>(cf);
-		CommandPtr cfHigh = std::make_shared<CeilingFanHighCommand>(cf);
-		CommandPtr cfOff = std::make_shared<CeilingFanOffCommand>(cf);
 
-		size_t slot = 0;
-		remote->SetCommand(slot++, cfLow, cfOff);
-		remote->SetCommand(slot++, cfMed, cfOff);
-		remote->SetCommand(slot++, cfHigh, cfOff);
+		size_t slot = 0U;
+		auto cf = std::make_shared<CeilingFan>();
+		SetCeilingFanCommands(remote, slot, cf);
 
 		remote->OnButtonWasPressed(0);
 		CHECK(cf->GetSpeed() == CeilingFan::Speed::Low);
@@ -123,52 +121,63 @@ SUITE(CommandTest)
 		CHECK(cf->GetSpeed() == CeilingFan::Speed::Medium);
 	}
 
-	TEST(LightTest)
-	{
-		auto remote = std::make_shared<RemoteControl>();
-		SetLightCommands(remote);
-		TestButtons(remote);
-	}
-
 	TEST(GarageDoorTest)
 	{
 		auto remote = std::make_shared<RemoteControl>();
-		SetGarageDoorCommands(remote);
+
+		size_t slot = 0U;
+		SetGarageDoorCommands(remote, slot);
+		TestButtons(remote);
+	}
+
+	TEST(LightTest)
+	{
+		auto remote = std::make_shared<RemoteControl>();
+
+		size_t slot = 0U;
+		SetLightCommands(remote, slot);
 		TestButtons(remote);
 	}
 
 	TEST(StereoTest)
 	{
 		auto remote = std::make_shared<RemoteControl>();
-		SetStereoCommands(remote);
+
+		size_t slot = 0U;
+		SetStereoCommands(remote, slot);
 		TestButtons(remote);
 	}
 
 	TEST(MacroTest)
 	{
 		auto remote = std::make_shared<RemoteControl>();
+
 		auto light = std::make_shared<Light>();
 		CommandPtr lightOn = std::make_shared<LightOnCommand>(light);
 		CommandPtr lightOff = std::make_shared<LightOffCommand>(light);
+
 		auto stereo = std::make_shared<Stereo>();
 		CommandPtr stereoOn = std::make_shared<StereoOnWithCDCommand>(stereo);
 		CommandPtr stereoOff = std::make_shared<StereoOffCommand>(stereo);
+
 		auto onCommands = { lightOn, stereoOn };
 		CommandPtr macroOn = std::make_shared<MacroCommand>(onCommands);
-		auto offCommands = { lightOff, stereoOff };
+		auto offCommands = { stereoOff, lightOff };
 		CommandPtr macroOff = std::make_shared<MacroCommand>(offCommands);
+
 		remote->SetCommand(0, macroOn, macroOff);
 		TestButtons(remote);
 	}
 
 	TEST(AllTest)
 	{
-		auto remote = std::make_shared<RemoteControl>(3);
+		auto remote = std::make_shared<RemoteControl>(7);
 
-		size_t slot = 0;
-		SetLightCommands(remote, slot++);
-		SetGarageDoorCommands(remote, slot++);
-		SetStereoCommands(remote, slot++);
+		size_t slot = 0U;
+		SetCeilingFanCommands(remote, slot);
+		SetGarageDoorCommands(remote, slot);
+		SetLightCommands(remote, slot);
+		SetStereoCommands(remote, slot);
 
 		for (decltype(slot) i = 0; i < slot; ++i) {
 			TestButtons(remote, i);
@@ -178,7 +187,8 @@ SUITE(CommandTest)
 	TEST(UndoTest)
 	{
 		auto remote = std::make_shared<RemoteControl>();
-		SetGarageDoorCommands(remote);
+		size_t slot = 0U;
+		SetGarageDoorCommands(remote, slot);
 		TestButtons(remote);
 		std::cout << "Undo was pressed: ";
 		remote->UndoButtonWasPressed();

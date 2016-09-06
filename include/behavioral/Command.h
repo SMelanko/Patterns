@@ -71,15 +71,15 @@ class GarageDoor
 public:
 	void Down() const noexcept
 	{
-		std::cout << "GarageDoor::Down";
+		std::cout << "GarageDoor::Down ";
 	}
 	void Stop() const noexcept
 	{
-		std::cout << "GarageDoor::Stop";
+		std::cout << "GarageDoor::Stop ";
 	}
 	void Up() const noexcept
 	{
-		std::cout << "GarageDoor::Up";
+		std::cout << "GarageDoor::Up ";
 	}
 };
 
@@ -90,11 +90,11 @@ class Light
 public:
 	void On() const noexcept
 	{
-		std::cout << "Light::On";
+		std::cout << "Light::On ";
 	}
 	void Off() const noexcept
 	{
-		std::cout << "Light::Off";
+		std::cout << "Light::Off ";
 	}
 };
 
@@ -105,19 +105,19 @@ class Stereo
 public:
 	void On() const noexcept
 	{
-		std::cout << "Stereo::On";
+		std::cout << "Stereo::On ";
 	}
 	void Off() const noexcept
 	{
-		std::cout << "Stereo::Off";
+		std::cout << "Stereo::Off ";
 	}
 	void SetCD() const noexcept
 	{
-		std::cout << "Stereo::SetCD";
+		std::cout << "Stereo::SetCD ";
 	}
 	void SetVolume(const uint16_t val) const noexcept
 	{
-		std::cout << "Stereo::SetVolume " << val;
+		std::cout << "Stereo::SetVolume " << val << " ";
 	}
 };
 
