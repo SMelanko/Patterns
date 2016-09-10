@@ -28,7 +28,7 @@ SUITE(AdapterTest)
 		CHECK(sensor->GetTemperature() == 0);
 	}
 
-	TEST(AdapterPrivateInheritance)
+	TEST(AdapterPrivateInheritanceTest)
 	{
 		std::unique_ptr<pattern::structural::CelsiusSensor1> sensor =
 			std::make_unique<pattern::structural::Adapter1>();

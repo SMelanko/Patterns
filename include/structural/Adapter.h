@@ -75,11 +75,12 @@ private:
 class FahrenheitSensor1
 {
 public:
-	float GetFahrenheitTemp() const noexcept {
+	auto GetFahrenheitTemp() const noexcept {
 		float t = 32.0;
 		// ...
 		return t;
 	}
+
 protected:
 	void Adjust() const noexcept
 	{
