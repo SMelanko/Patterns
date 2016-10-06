@@ -63,4 +63,5 @@ AppendBehavioralPatternTest(ChainOfResponsibility)
 AppendBehavioralPatternTest(Command)
 AppendBehavioralPatternTest(Observer)
 AppendBehavioralPatternTest(Strategy)
+AppendBehavioralPatternTest(TemplateMethod)
 
