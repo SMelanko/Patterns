@@ -32,36 +32,20 @@ function(PatternTestImpl class name)
 	add_test(${test_name} ${test_name})
 endfunction()
 
-function(AppendCreationalPatternTest name)
-	PatternTestImpl(creational ${name})
-endfunction()
+set(CreationalList
+	AbstractFactory Builder FactoryMethod ObjectPool Prototype Singleton)
+foreach(creational_pattern ${CreationalList})
+	PatternTestImpl(creational ${creational_pattern})
+endforeach()
 
-function(AppendStructuralPatternTest name)
-	PatternTestImpl(structural ${name})
-endfunction()
+set(StructuralList
+	Adapter Bridge Composite Decorator Facade Flyweight Proxy)
+foreach(structural_pattern ${StructuralList})
+	PatternTestImpl(structural ${structural_pattern})
+endforeach()
 
-function(AppendBehavioralPatternTest name)
-	PatternTestImpl(behavioral ${name})
-endfunction()
-
-AppendCreationalPatternTest(AbstractFactory)
-AppendCreationalPatternTest(Builder)
-AppendCreationalPatternTest(FactoryMethod)
-AppendCreationalPatternTest(ObjectPool)
-AppendCreationalPatternTest(Prototype)
-AppendCreationalPatternTest(Singleton)
-
-AppendStructuralPatternTest(Adapter)
-AppendStructuralPatternTest(Bridge)
-AppendStructuralPatternTest(Composite)
-AppendStructuralPatternTest(Decorator)
-AppendStructuralPatternTest(Facade)
-AppendStructuralPatternTest(Flyweight)
-AppendStructuralPatternTest(Proxy)
-
-AppendBehavioralPatternTest(ChainOfResponsibility)
-AppendBehavioralPatternTest(Command)
-AppendBehavioralPatternTest(Observer)
-AppendBehavioralPatternTest(Strategy)
-AppendBehavioralPatternTest(TemplateMethod)
-
+set(BehavioralList
+	ChainOfResponsibility Command Observer Strategy TemplateMethod)
+foreach(behavioral_pattern ${BehavioralList})
+	PatternTestImpl(behavioral ${behavioral_pattern})
+endforeach()
