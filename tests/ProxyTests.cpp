@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <array>
 
-#include <include/gsl_util.h>
+#include <gsl/gsl>
 
 constexpr size_t imageArraySize = 5;
 using ImagePtr = std::shared_ptr<pattern::structural::Image>;

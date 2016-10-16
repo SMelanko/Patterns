@@ -18,7 +18,7 @@
 
 #include <UnitTest++/UnitTest++.h>
 
-#include <include/gsl_util.h>
+#include <gsl/gsl>
 
 using InterfacePtr = std::unique_ptr<pattern::structural::Interface>;
 

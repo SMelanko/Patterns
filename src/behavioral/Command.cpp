@@ -16,7 +16,7 @@
 
 #include "behavioral/Command.h"
 
-#include <include/gsl.h>
+#include <gsl/gsl>
 
 namespace pattern
 {

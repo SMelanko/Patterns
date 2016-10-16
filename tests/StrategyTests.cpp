@@ -18,7 +18,7 @@
 
 #include <UnitTest++/UnitTest++.h>
 
-#include <include/gsl_assert.h>
+#include <gsl/gsl>
 
 using pattern::behavioral::ZipCompression;
 using pattern::behavioral::ArjCompression;
