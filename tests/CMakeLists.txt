@@ -45,7 +45,7 @@ foreach(structural_pattern ${StructuralList})
 endforeach()
 
 set(BehavioralList
-	ChainOfResponsibility Command Observer Strategy TemplateMethod)
+	ChainOfResponsibility Command Iterator Observer Strategy TemplateMethod)
 foreach(behavioral_pattern ${BehavioralList})
 	PatternTestImpl(behavioral ${behavioral_pattern})
 endforeach()
