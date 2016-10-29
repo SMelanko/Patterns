@@ -19,29 +19,31 @@
 #include <UnitTest++/UnitTest++.h>
 
 //! Creates Roman legion.
-auto CreateLegion()
+auto CreateLegion(const int infantrymanCnt = 3000,
+	const int archerCnt = 1200, const int horsemanCnt = 300)
 {
-	std::shared_ptr<pattern::structural::CompositeUnit> legion =
-		std::make_shared<pattern::structural::CompositeUnit>();
+	auto legion = std::make_shared<pattern::structural::CompositeUnit>();
+
 	// Roman legion contains:
-	for (int i = 0; i < 3000; ++i) {
+	for (int i = 0; i < infantrymanCnt; ++i) {
 		legion->AddUnit(std::make_shared<pattern::structural::Infantryman>());
 	}
-	for (int i = 0; i < 1200; ++i) {
+	for (int i = 0; i < archerCnt; ++i) {
 		legion->AddUnit(std::make_shared<pattern::structural::Archer>());
 	}
-	for (int i = 0; i < 300; ++i) {
+	for (int i = 0; i < horsemanCnt; ++i) {
 		legion->AddUnit(std::make_shared<pattern::structural::Horseman>());
 	}
 
 	return legion;
 }
 
-SUITE(AbstractFactoryTest)
+SUITE(CompositeTest)
 {
-	TEST(EmptyTest)
+	TEST(ArmyTest)
 	{
 		auto army = std::make_unique<pattern::structural::CompositeUnit>();
+
 		for (int i = 0; i < 4; ++i) {
 			army->AddUnit(CreateLegion());
 		}
