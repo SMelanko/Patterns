@@ -20,13 +20,18 @@
 
 #include "gsl/gsl_util"
 
+#include <memory>
+
+using GumballMachine = pattern::behavioral::GumballMachine;
+
 SUITE(StateTest)
 {
 	TEST(GumballTest1)
 	{
 		auto _ = gsl::finally([](){ std::cout << std::endl; });
 
-		auto gm = std::make_unique<pattern::behavioral::GunballMachine>(5);
+		auto gm = std::make_shared<GumballMachine>();
+		gm->Init(5);
 		gm->InsertQuarter();
 		gm->TurnCrank();
 	}
@@ -35,7 +40,8 @@ SUITE(StateTest)
 	{
 		auto _ = gsl::finally([](){ std::cout << std::endl; });
 
-		auto gm = std::make_unique<pattern::behavioral::GunballMachine>(5);
+		auto gm = std::make_shared<pattern::behavioral::GumballMachine>();
+		gm->Init(5);
 		gm->InsertQuarter();
 		gm->EjectQuarter();
 		gm->TurnCrank();
@@ -45,7 +51,8 @@ SUITE(StateTest)
 	{
 		auto _ = gsl::finally([](){ std::cout << std::endl; });
 
-		auto gm = std::make_unique<pattern::behavioral::GunballMachine>(5);
+		auto gm = std::make_shared<pattern::behavioral::GumballMachine>();
+		gm->Init(5);
 		gm->InsertQuarter();
 		gm->TurnCrank();
 		gm->InsertQuarter();
@@ -57,7 +64,8 @@ SUITE(StateTest)
 	{
 		auto _ = gsl::finally([](){ std::cout << std::endl; });
 
-		auto gm = std::make_unique<pattern::behavioral::GunballMachine>(3);
+		auto gm = std::make_shared<pattern::behavioral::GumballMachine>();
+		gm->Init(3);
 		gm->InsertQuarter();
 		gm->TurnCrank();
 		gm->InsertQuarter();
@@ -68,7 +76,6 @@ SUITE(StateTest)
 		gm->TurnCrank();
 		gm->TurnCrank();
 		gm->InsertQuarter();
-		gm->TurnCrank();
 	}
 }
 

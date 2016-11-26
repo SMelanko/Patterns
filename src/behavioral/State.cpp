@@ -21,102 +21,138 @@ namespace pattern
 namespace behavioral
 {
 
-GunballMachine::GunballMachine(const int16_t cnt)
-	: _cnt{ cnt }
+void GumballMachine::Init(const uint16_t cnt)
 {
+	_noQuarterState = std::make_shared<NoQuarterState>(shared_from_this());
+	_hasQuarterState = std::make_shared<HasQuarterState>(shared_from_this());
+	_soldState = std::make_shared<SoldState>(shared_from_this());
+	_soldOutState = std::make_shared<SoldOutState>(shared_from_this());
+
+	_cnt = cnt;
+
 	if (_cnt > 0) {
-		_state = State::NO_QUARTER;
+		_state = _noQuarterState;
+	} else {
+		_state = _soldOutState;
 	}
 }
 
-void GunballMachine::EjectQuarter() noexcept
+void GumballMachine::EjectQuarter()
 {
-	switch (_state) {
-	case State::HAS_QUARTER:
-		std::cout << "Quarter returned\n";
-		_state = State::NO_QUARTER;
-		break;
-	case State::NO_QUARTER:
-		std::cout << "You haven't inserted a quarter\n";
-		break;
-	case State::SOLD_OUT:
-		std::cout << "You can't eject, you haven't inserted a quarter yet\n";
-		break;
-	case State::SOLD:
-		std::cout << "Sorry, you have already turned the crank\n";
-		break;
-	default:
-		break;
+	_state->EjectQuarter();
+}
+
+void GumballMachine::InsertQuarter()
+{
+	_state->InsertQuarter();
+}
+
+void GumballMachine::TurnCrank()
+{
+	_state->TurnCrank();
+	_state->Dispense();
+}
+
+void GumballMachine::ReleaseBall() noexcept
+{
+	std::cout << "A gumball comes rollingout the slot...\n";
+	if (_cnt > 0) {
+		--_cnt;
 	}
 }
 
-void GunballMachine::Dispense() noexcept
+void GumballMachine::SetState(StateShPtr state) noexcept
 {
-	switch (_state) {
-	case State::HAS_QUARTER:
-		std::cout << "No gumballs dispensed\n";
-		break;
-	case State::NO_QUARTER:
-		std::cout << "You need to pay first\n";
-		break;
-	case State::SOLD_OUT:
-		std::cout << "No gumballs dispensed\n";
-		break;
-	case State::SOLD:
-		std::cout << "A gumball comes rolling  out the slot\n";
-		if (--_cnt == 0) {
-			std::cout << "Oops, out of gumballs!\n";
-			_state = State::SOLD_OUT;
-		} else {
-			_state = State::NO_QUARTER;
-		}
-		break;
-	default:
-		break;
+	_state = state;
+}
+
+void NoQuarterState::InsertQuarter()
+{
+	std::cout << "You have inserted a quarter\n";
+	_gm->SetState(_gm->GetHasQuarterState());
+}
+
+void NoQuarterState::EjectQuarter()
+{
+	std::cout << "You haven't inserted a quarter\n";
+}
+
+void NoQuarterState::TurnCrank()
+{
+	std::cout << "You turned but there's no quarter\n";
+}
+
+void NoQuarterState::Dispense()
+{
+	std::cout << "You need to pay first\n";
+}
+
+void HasQuarterState::InsertQuarter()
+{
+	std::cout << "You can't insert another quarter\n";
+}
+
+void HasQuarterState::EjectQuarter()
+{
+	std::cout << "Quarter returned\n";
+	_gm->SetState(_gm->GetNoQuarterState());
+}
+
+void HasQuarterState::TurnCrank()
+{
+	std::cout << "You turned...\n";
+	_gm->SetState(_gm->GetSoldState());
+}
+
+void HasQuarterState::Dispense()
+{
+	std::cout << "No gumballs dispensed\n";
+}
+
+void SoldState::InsertQuarter()
+{
+	std::cout << "Please wait, we're already giving you a gumball\n";
+}
+
+void SoldState::EjectQuarter()
+{
+	std::cout << "Sorry, you have already turned the crank\n";
+}
+
+void SoldState::TurnCrank()
+{
+	std::cout << "Turning twice doesn't get you another gumball!\n";
+}
+
+void SoldState::Dispense()
+{
+	_gm->ReleaseBall();
+	if (_gm->GetCount() <= 0) {
+		std::cout << "Oops, out of gumballs!\n";
+		_gm->SetState(_gm->GetSoldOutState());
+	} else {
+		_gm->SetState(_gm->GetNoQuarterState());
 	}
 }
 
-void GunballMachine::InsertQuarter() noexcept
+void SoldOutState::InsertQuarter()
 {
-	switch (_state) {
-	case State::HAS_QUARTER:
-		std::cout << "You can't insert another quarter\n";
-		break;
-	case State::NO_QUARTER:
-		std::cout << "You have inserted a quarter\n";
-		_state = State::HAS_QUARTER;
-		break;
-	case State::SOLD_OUT:
-		std::cout << "You can't insert a quarter, the machine is sold out\n";
-		break;
-	case State::SOLD:
-		std::cout << "Please wait, we're already giving you a gumball\n";
-		break;
-	default:
-		break;
-	}
+	std::cout << "You can't insert a quarter, the machine is sold out\n";
 }
 
-void GunballMachine::TurnCrank() noexcept
+void SoldOutState::EjectQuarter()
 {
-	switch (_state) {
-	case State::HAS_QUARTER:
-		std::cout << "You turned...\n";
-		_state = State::SOLD;
-		Dispense();
-		break;
-	case State::NO_QUARTER:
-		std::cout << "You turned but there is no quarter\n";
-		break;
-	case State::SOLD_OUT:
-		std::cout << "You turned but there are no gumballs\n";
-		break;
-	case State::SOLD:
-		std::cout << "Turning twice doesn't get you another gumball!\n";
-		break;
-	default:
-		break;
-	}
+	std::cout << "You can't eject, you haven't inserted a quarter yet\n";
+}
+
+void SoldOutState::TurnCrank()
+{
+	std::cout << "You turned but there are no gumballs\n";
+}
+
+void SoldOutState::Dispense()
+{
+	std::cout << "No gumballs dispensed\n";
 }
 
 } // namespace behavioral

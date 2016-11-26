@@ -27,32 +27,138 @@ namespace pattern
 namespace behavioral
 {
 
-class GunballMachine
+class GumballMachine;
+using GumballMachineShPtr = std::shared_ptr<GumballMachine>;
+
+class State
 {
 public:
-	enum class State
-	{
-		UNDEFINED,
-		SOLD_OUT,
-		NO_QUARTER,
-		HAS_QUARTER,
-		SOLD
-	};
+	virtual ~State() = default;
 
 public:
-	GunballMachine() = default;
-	explicit GunballMachine(const int16_t cnt);
+	virtual void InsertQuarter() = 0;
+	virtual void EjectQuarter() = 0;
+	virtual void TurnCrank() = 0;
+	virtual void Dispense() = 0;
+};
 
-	void EjectQuarter() noexcept;
-	void InsertQuarter() noexcept;
-	void TurnCrank() noexcept;
+using StateShPtr = std::shared_ptr<State>;
+
+class NoQuarterState : public State
+{
+public:
+	explicit NoQuarterState(GumballMachineShPtr gm) noexcept
+		: _gm{ gm }
+	{
+	}
+
+public:
+	void InsertQuarter() override;
+	void EjectQuarter() override;
+	void TurnCrank() override;
+	void Dispense() override;
 
 private:
-	void Dispense() noexcept;
+	GumballMachineShPtr _gm;
+};
+
+class HasQuarterState : public State
+{
+public:
+	explicit HasQuarterState(GumballMachineShPtr gm) noexcept
+		: _gm{ gm }
+	{
+	}
+
+public:
+	void InsertQuarter() override;
+	void EjectQuarter() override;
+	void TurnCrank() override;
+	void Dispense() override;
 
 private:
-	int16_t _cnt = 0;
-	State _state = State::UNDEFINED;
+	GumballMachineShPtr _gm;
+};
+
+class SoldState : public State
+{
+public:
+	explicit SoldState(GumballMachineShPtr gm) noexcept
+		: _gm{ gm }
+	{
+	}
+
+public:
+	void InsertQuarter() override;
+	void EjectQuarter() override;
+	void TurnCrank() override;
+	void Dispense() override;
+
+private:
+	GumballMachineShPtr _gm;
+};
+
+class SoldOutState : public State
+{
+public:
+	explicit SoldOutState(GumballMachineShPtr gm) noexcept
+		: _gm{ gm }
+	{
+	}
+
+public:
+	void InsertQuarter() override;
+	void EjectQuarter() override;
+	void TurnCrank() override;
+	void Dispense() override;
+
+private:
+	GumballMachineShPtr _gm;
+};
+
+class GumballMachine : public std::enable_shared_from_this<GumballMachine>
+{
+public:
+	GumballMachine() = default;
+	void Init(const uint16_t cnt);
+
+	void InsertQuarter();
+	void EjectQuarter();
+	void TurnCrank();
+	void Dispense();
+
+	void ReleaseBall() noexcept;
+	void SetState(StateShPtr state) noexcept;
+
+	StateShPtr GetNoQuarterState() noexcept
+	{
+		return _noQuarterState;
+	}
+	StateShPtr GetHasQuarterState() noexcept
+	{
+		return _hasQuarterState;
+	}
+	StateShPtr GetSoldState() noexcept
+	{
+		return _soldState;
+	}
+	StateShPtr GetSoldOutState() noexcept
+	{
+		return _soldOutState;
+	}
+	auto GetCount() const noexcept
+	{
+		return _cnt;
+	}
+
+private:
+	StateShPtr _noQuarterState = nullptr;
+	StateShPtr _hasQuarterState = nullptr;
+	StateShPtr _soldState = nullptr;
+	StateShPtr _soldOutState = nullptr;
+
+	StateShPtr _state = nullptr;
+	uint16_t _cnt = 0;
 };
 
 } // namespace behavioral
