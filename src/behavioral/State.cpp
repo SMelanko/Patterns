@@ -16,6 +16,8 @@
 
 #include "behavioral/State.h"
 
+#include <random>
+
 namespace pattern
 {
 namespace behavioral
@@ -27,6 +29,7 @@ void GumballMachine::Init(const uint16_t cnt)
 	_hasQuarterState = std::make_shared<HasQuarterState>(shared_from_this());
 	_soldState = std::make_shared<SoldState>(shared_from_this());
 	_soldOutState = std::make_shared<SoldOutState>(shared_from_this());
+	_winnerState = std::make_shared<WinnerState>(shared_from_this());
 
 	_cnt = cnt;
 
@@ -101,7 +104,12 @@ void HasQuarterState::EjectQuarter()
 void HasQuarterState::TurnCrank()
 {
 	std::cout << "You turned...\n";
-	_gm->SetState(_gm->GetSoldState());
+	auto winner = Generate(1, 10);
+	if (winner == 1 && _gm->GetCount() > 0) {
+		_gm->SetState(_gm->GetWinnerState());
+	} else {
+		_gm->SetState(_gm->GetSoldState());
+	}
 }
 
 void HasQuarterState::Dispense()
@@ -153,6 +161,47 @@ void SoldOutState::TurnCrank()
 void SoldOutState::Dispense()
 {
 	std::cout << "No gumballs dispensed\n";
+}
+
+void WinnerState::InsertQuarter()
+{
+	std::cout << "Please wait, we're already giving you a gumball\n";
+}
+
+void WinnerState::EjectQuarter()
+{
+	std::cout << "Sorry, you have already turned the crank\n";
+}
+
+void WinnerState::TurnCrank()
+{
+	std::cout << "Turning twice doesn't get you another gumball!\n";
+}
+
+void WinnerState::Dispense()
+{
+	std::cout << "YOU'RE WINNER! You get two gumballs for your quarter\n";
+
+	_gm->ReleaseBall();
+	if (_gm->GetCount() == 0) {
+		_gm->SetState(_gm->GetSoldOutState());
+	} else {
+		_gm->ReleaseBall();
+		if (_gm->GetCount() > 0) {
+			_gm->SetState(_gm->GetNoQuarterState());
+		} else {
+			std::cout << "Oops, out of gumballs!\n";
+			_gm->SetState(_gm->GetSoldOutState());
+		}
+	}
+}
+
+int Generate(const int from, const int to)
+{
+	std::random_device rd;
+
+	return std::bind(std::uniform_int_distribution<>{from, to},
+		std::default_random_engine{ rd() })();
 }
 
 } // namespace behavioral

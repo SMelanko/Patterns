@@ -116,6 +116,24 @@ private:
 	GumballMachineShPtr _gm;
 };
 
+class WinnerState : public State
+{
+public:
+	explicit WinnerState(GumballMachineShPtr gm) noexcept
+		: _gm{ gm }
+	{
+	}
+
+public:
+	void InsertQuarter() override;
+	void EjectQuarter() override;
+	void TurnCrank() override;
+	void Dispense() override;
+
+private:
+	GumballMachineShPtr _gm;
+};
+
 class GumballMachine : public std::enable_shared_from_this<GumballMachine>
 {
 public:
@@ -146,6 +164,10 @@ public:
 	{
 		return _soldOutState;
 	}
+	StateShPtr GetWinnerState() noexcept
+	{
+		return _winnerState;
+	}
 	auto GetCount() const noexcept
 	{
 		return _cnt;
@@ -156,10 +178,13 @@ private:
 	StateShPtr _hasQuarterState = nullptr;
 	StateShPtr _soldState = nullptr;
 	StateShPtr _soldOutState = nullptr;
+	StateShPtr _winnerState = nullptr;
 
 	StateShPtr _state = nullptr;
 	uint16_t _cnt = 0;
 };
+
+int Generate(const int from, const int to);
 
 } // namespace behavioral
 } // namespace pattern
