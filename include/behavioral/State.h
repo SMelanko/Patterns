@@ -33,6 +33,10 @@ using GumballMachineShPtr = std::shared_ptr<GumballMachine>;
 class State
 {
 public:
+	explicit State(GumballMachineShPtr gm) noexcept
+		: _gm{ gm }
+	{
+	}
 	virtual ~State() = default;
 
 public:
@@ -40,6 +44,9 @@ public:
 	virtual void EjectQuarter() = 0;
 	virtual void TurnCrank() = 0;
 	virtual void Dispense() = 0;
+
+protected:
+	GumballMachineShPtr _gm;
 };
 
 using StateShPtr = std::shared_ptr<State>;
@@ -48,7 +55,7 @@ class NoQuarterState : public State
 {
 public:
 	explicit NoQuarterState(GumballMachineShPtr gm) noexcept
-		: _gm{ gm }
+		: State{ gm }
 	{
 	}
 
@@ -57,16 +64,13 @@ public:
 	void EjectQuarter() override;
 	void TurnCrank() override;
 	void Dispense() override;
-
-private:
-	GumballMachineShPtr _gm;
 };
 
 class HasQuarterState : public State
 {
 public:
 	explicit HasQuarterState(GumballMachineShPtr gm) noexcept
-		: _gm{ gm }
+		: State{ gm }
 	{
 	}
 
@@ -75,16 +79,13 @@ public:
 	void EjectQuarter() override;
 	void TurnCrank() override;
 	void Dispense() override;
-
-private:
-	GumballMachineShPtr _gm;
 };
 
 class SoldState : public State
 {
 public:
 	explicit SoldState(GumballMachineShPtr gm) noexcept
-		: _gm{ gm }
+		: State{ gm }
 	{
 	}
 
@@ -93,16 +94,13 @@ public:
 	void EjectQuarter() override;
 	void TurnCrank() override;
 	void Dispense() override;
-
-private:
-	GumballMachineShPtr _gm;
 };
 
 class SoldOutState : public State
 {
 public:
 	explicit SoldOutState(GumballMachineShPtr gm) noexcept
-		: _gm{ gm }
+		: State{ gm }
 	{
 	}
 
@@ -111,16 +109,13 @@ public:
 	void EjectQuarter() override;
 	void TurnCrank() override;
 	void Dispense() override;
-
-private:
-	GumballMachineShPtr _gm;
 };
 
 class WinnerState : public State
 {
 public:
 	explicit WinnerState(GumballMachineShPtr gm) noexcept
-		: _gm{ gm }
+		: State{ gm }
 	{
 	}
 
@@ -129,9 +124,6 @@ public:
 	void EjectQuarter() override;
 	void TurnCrank() override;
 	void Dispense() override;
-
-private:
-	GumballMachineShPtr _gm;
 };
 
 class GumballMachine : public std::enable_shared_from_this<GumballMachine>
@@ -148,23 +140,23 @@ public:
 	void ReleaseBall() noexcept;
 	void SetState(StateShPtr state) noexcept;
 
-	StateShPtr GetNoQuarterState() noexcept
+	auto GetNoQuarterState() noexcept
 	{
 		return _noQuarterState;
 	}
-	StateShPtr GetHasQuarterState() noexcept
+	auto GetHasQuarterState() noexcept
 	{
 		return _hasQuarterState;
 	}
-	StateShPtr GetSoldState() noexcept
+	auto GetSoldState() noexcept
 	{
 		return _soldState;
 	}
-	StateShPtr GetSoldOutState() noexcept
+	auto GetSoldOutState() noexcept
 	{
 		return _soldOutState;
 	}
-	StateShPtr GetWinnerState() noexcept
+	auto GetWinnerState() noexcept
 	{
 		return _winnerState;
 	}

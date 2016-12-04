@@ -104,7 +104,7 @@ void HasQuarterState::EjectQuarter()
 void HasQuarterState::TurnCrank()
 {
 	std::cout << "You turned...\n";
-	auto winner = Generate(1, 10);
+	const auto winner = Generate(1, 10);
 	if (winner == 1 && _gm->GetCount() > 0) {
 		_gm->SetState(_gm->GetWinnerState());
 	} else {
