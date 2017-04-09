@@ -29,6 +29,10 @@ namespace pattern
 namespace creational
 {
 
+///
+/// Example #1.
+///
+
 // Only for testing.
 enum class WARRIOR_ID : uint32_t
 {
@@ -45,11 +49,13 @@ class Warrior
 public:
 	virtual ~Warrior() noexcept = default;
 
+public:
 	virtual WARRIOR_ID GetId() const noexcept = 0;
 	virtual void PrintInfo() const noexcept = 0;
 };
 
-using WarriorPtr = std::unique_ptr<Warrior>;
+using WarriorUnPtr = std::unique_ptr<Warrior>;
+using WarriorShPtr = std::shared_ptr<Warrior>;
 
 //
 // Factory.
@@ -58,10 +64,11 @@ using WarriorPtr = std::unique_ptr<Warrior>;
 class Factory
 {
 public:
-	using MapType = std::map<std::string, std::function<WarriorPtr()>>;
+	using MapType = std::map<std::string, std::function<WarriorUnPtr()>>;
 
+public:
 	Factory() noexcept = default;
-	~Factory() noexcept = default;
+	virtual ~Factory() noexcept = default;
 
 	Factory(const Factory&) = delete;
 	Factory& operator=(const Factory&) = delete;
@@ -69,11 +76,8 @@ public:
 	Factory(Factory&&) noexcept = delete;
 	Factory& operator=(Factory&&) noexcept = delete;
 
-	static WarriorPtr CreateInstance(const std::string& s)
-	{
-		auto it = _map.find(s);
-		return (it == _map.end()) ? nullptr : it->second();
-	}
+public:
+	static WarriorUnPtr CreateInstance(const std::string& s);
 
 protected:
 	static MapType _map;
@@ -84,7 +88,7 @@ protected:
 //
 
 template<typename T>
-class FactoryRegister: Factory
+class FactoryRegister : Factory
 {
 public:
 	FactoryRegister(const std::string& s)
@@ -100,7 +104,7 @@ public:
 	FactoryRegister<NAME> NAME::reg(#NAME)
 
 //
-// Concrete warriors.
+// Specific warriors.
 //
 
 class Infantryman : public Warrior
@@ -108,6 +112,7 @@ class Infantryman : public Warrior
 public:
 	virtual ~Infantryman() noexcept = default;
 
+public:
 	WARRIOR_ID GetId() const noexcept override
 	{
 		return WARRIOR_ID::INFANTRYMAN;
@@ -126,6 +131,7 @@ class Archer : public Warrior
 public:
 	virtual ~Archer() noexcept = default;
 
+public:
 	WARRIOR_ID GetId() const noexcept override
 	{
 		return WARRIOR_ID::ARCHER;
@@ -137,6 +143,105 @@ public:
 
 private:
 	REGISTER_DEC_TYPE(Archer);
+};
+
+///
+/// Example #2. Generalized Constructor.
+///
+
+enum class PRODUCT_ID : uint32_t
+{
+	PRODUCT_A = 1,
+	PRODUCT_B = 2
+};
+
+//
+// Abstract product.
+//
+
+class Product
+{
+public:
+	virtual ~Product() noexcept = default;
+
+public:
+	virtual PRODUCT_ID GetId() const noexcept = 0;
+};
+
+using ProductShPtr = std::shared_ptr<Product>;
+
+//
+// Specific products.
+//
+
+class ProductA : public Product
+{
+public:
+	ProductA(const int)
+	{
+	};
+
+	virtual ~ProductA() noexcept = default;
+
+public:
+	PRODUCT_ID GetId() const noexcept override
+	{
+		return PRODUCT_ID::PRODUCT_A;
+	}
+};
+
+class ProductB : public Product
+{
+public:
+	ProductB(const std::string&)
+	{
+	};
+
+	virtual ~ProductB() noexcept = default;
+
+public:
+	PRODUCT_ID GetId() const noexcept override
+	{
+		return PRODUCT_ID::PRODUCT_B;
+	}
+};
+
+//
+// Product factory.
+//
+
+class ProductFactory
+{
+public:
+	template <class... Args>
+	static ProductShPtr Create(const PRODUCT_ID id, Args&&... args)
+	{
+		switch (id) {
+		case PRODUCT_ID::PRODUCT_A:
+			return Create<ProductA>(std::forward<Args>(args)...);
+		case PRODUCT_ID::PRODUCT_B:
+			return Create<ProductB>(std::forward<Args>(args)...);
+		default:
+			return nullptr;
+		}
+	}
+
+private:
+	template<typename T, typename... Args>
+	static std::enable_if_t<
+		std::is_constructible<T, Args...>::value, ProductShPtr
+	> Create(Args&&... args)
+	{
+		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
+
+	template<typename T, typename... Args>
+	static std::enable_if_t<
+		!std::is_constructible<T, Args...>::value, ProductShPtr
+	> Create(Args&&...)
+	{
+		return nullptr;
+	}
 };
 
 } // namespace creational

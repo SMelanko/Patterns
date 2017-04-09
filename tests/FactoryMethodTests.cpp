@@ -20,48 +20,69 @@
 
 #include <vector>
 
+namespace pc = pattern::creational;
+
 SUITE(FactoryMethodTest)
 {
 	TEST(InfantrymanTest)
 	{
-		auto infantryman = pattern::creational::Factory::CreateInstance("Infantryman");
-		CHECK(infantryman->GetId() == pattern::creational::WARRIOR_ID::INFANTRYMAN);
-		std::cout << std::endl;
+		auto infantryman = pc::Factory::CreateInstance("Infantryman");
+		CHECK(infantryman->GetId() == pc::WARRIOR_ID::INFANTRYMAN);
 		infantryman->PrintInfo();
-		std::cout << std::endl;
 	}
 
 	TEST(ArcherTest)
 	{
-		auto archer = pattern::creational::Factory::CreateInstance("Archer");
-		CHECK(archer->GetId() == pattern::creational::WARRIOR_ID::ARCHER);
-		std::cout << std::endl;
+		auto archer = pc::Factory::CreateInstance("Archer");
+		CHECK(archer->GetId() == pc::WARRIOR_ID::ARCHER);
 		archer->PrintInfo();
-		std::cout << std::endl;
 	}
 
 	TEST(SetTest)
 	{
 		constexpr uint32_t size = 10;
-		std::vector<pattern::creational::WarriorPtr> v(size);
+		std::vector<pc::WarriorUnPtr> v(size);
 		for (uint32_t i = 0; i < size; ++i) {
-			v[i] = (i % 2 == 0) ?
-				pattern::creational::Factory::CreateInstance("Archer") :
-				pattern::creational::Factory::CreateInstance("Infantryman");
+			v[i] = (i % 2 == 0) ? pc::Factory::CreateInstance("Archer")
+				: pc::Factory::CreateInstance("Infantryman");
 		}
 		for (uint32_t i = 0; i < size; ++i) {
 			if (i % 2 == 0) {
-				CHECK(v[i]->GetId() == pattern::creational::WARRIOR_ID::ARCHER);
+				CHECK(v[i]->GetId() == pc::WARRIOR_ID::ARCHER);
 			} else {
-				CHECK(v[i]->GetId() == pattern::creational::WARRIOR_ID::INFANTRYMAN);
+				CHECK(v[i]->GetId() == pc::WARRIOR_ID::INFANTRYMAN);
 			}
 		}
 	}
 
 	TEST(UnknownWarriorTest)
 	{
-		auto unknown = pattern::creational::Factory::CreateInstance("Unknown");
+		auto unknown = pc::Factory::CreateInstance("Unknown");
 		CHECK(unknown == nullptr);
+	}
+
+	TEST(CreateProductATest)
+	{
+		auto a = pc::ProductFactory::Create(pc::PRODUCT_ID::PRODUCT_A, 123);
+		CHECK(a->GetId() == pc::PRODUCT_ID::PRODUCT_A);
+	}
+
+	TEST(CreateProductAFailTest)
+	{
+		auto a = pc::ProductFactory::Create(pc::PRODUCT_ID::PRODUCT_A, "");
+		CHECK(a == nullptr);
+	}
+
+	TEST(CreateProductBTest)
+	{
+		auto b = pc::ProductFactory::Create(pc::PRODUCT_ID::PRODUCT_B, "");
+		CHECK(b->GetId() == pc::PRODUCT_ID::PRODUCT_B);
+	}
+
+	TEST(CreateProductBFailTest)
+	{
+		auto b = pc::ProductFactory::Create(pc::PRODUCT_ID::PRODUCT_B, 321);
+		CHECK(b == nullptr);
 	}
 }
 

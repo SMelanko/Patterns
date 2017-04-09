@@ -28,7 +28,7 @@ namespace creational
 {
 
 class Warrior;
-using WarriorPtr = std::unique_ptr<Warrior>;
+using WarriorUnPtr = std::unique_ptr<Warrior>;
 
 //
 // Abstract product.
@@ -39,7 +39,7 @@ class Warrior
 public:
 	virtual ~Warrior() = default;
 
-	virtual WarriorPtr Clone() = 0;
+	virtual WarriorUnPtr Clone() = 0;
 	virtual void PrintInfo() const noexcept = 0;
 };
 
@@ -54,7 +54,7 @@ class Archer: public Warrior
 public:
 	virtual ~Archer() = default;
 
-	WarriorPtr Clone() override
+	WarriorUnPtr Clone() override
 	{
 		return std::make_unique<Archer>(*this);
 	}
@@ -74,7 +74,7 @@ class Infantryman: public Warrior
 public:
 	virtual ~Infantryman() = default;
 
-	WarriorPtr Clone() override
+	WarriorUnPtr Clone() override
 	{
 		return std::make_unique<Infantryman>(*this);
 	}
@@ -94,8 +94,8 @@ private:
 class PrototypeFactory
 {
 public:
-	WarriorPtr CreateArcher() const;
-	WarriorPtr CreateInfantryman() const;
+	WarriorUnPtr CreateArcher() const;
+	WarriorUnPtr CreateInfantryman() const;
 };
 
 } // namespace creational

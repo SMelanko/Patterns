@@ -21,12 +21,12 @@ namespace pattern
 namespace creational
 {
 
-WarriorPtr PrototypeFactory::CreateArcher() const {
+WarriorUnPtr PrototypeFactory::CreateArcher() const {
 	static Archer prototype;
 	return prototype.Clone();
 }
 
-WarriorPtr PrototypeFactory::CreateInfantryman() const {
+WarriorUnPtr PrototypeFactory::CreateInfantryman() const {
 	static Infantryman prototype;
 	return prototype.Clone();
 }
