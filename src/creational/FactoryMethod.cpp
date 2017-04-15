@@ -5,18 +5,28 @@ namespace pattern
 namespace creational
 {
 
-Factory::MapType Factory::_map;
+ExchangeConnectorFactory::MapType ExchangeConnectorFactory::_map;
 
-WarriorUnPtr Factory::CreateInstance(const std::string& s)
+ExchangeConnectorUnPtr ExchangeConnectorFactory::Create(const std::string& s)
 {
 	auto it = _map.find(s);
 
-	return (it == _map.end()) ? nullptr : it->second();
+	return (it != _map.end()) ? it->second() : nullptr;
 }
 
-REGISTER_DEF_TYPE(Infantryman);
+REGISTER_DEF_TYPE(GoogleAdX);
 
-REGISTER_DEF_TYPE(Archer);
+REGISTER_DEF_TYPE(Smaato);
+
+WarriorUnPtr InfantryFactory::CreateWarrior()
+{
+	return std::make_unique<Infantryman>();
+}
+
+WarriorUnPtr ArchersFactory::CreateWarrior()
+{
+	return std::make_unique<Archer>();
+}
 
 } // namespace creational
 } // namespace pattern

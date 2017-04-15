@@ -1,7 +1,11 @@
 #pragma once
 
-#ifndef PATTERNS_FACTORY_METHOD_H
-#define PATTERNS_FACTORY_METHOD_H
+#ifndef PATTERNS_CREATIONAL_FACTORY_METHOD_H
+#define PATTERNS_CREATIONAL_FACTORY_METHOD_H
+
+///
+/// Create an instance of several derived classes.
+///
 
 #include <iostream>
 #include <map>
@@ -13,122 +17,106 @@ namespace pattern
 namespace creational
 {
 
+////////////////////////////////////////////////////////////////////////////////
 ///
 /// Example #1.
 ///
 
 // Only for testing.
-enum class WARRIOR_ID : uint32_t
+enum class EXCHANGE_CONNECTOR_ID : uint32_t
 {
-	INFANTRYMAN = 1,
-	ARCHER = 2
+	GOOGLE_ADX = 1,
+	SMAATO = 2
 };
 
 //
-// Abstract product.
+// Abstract exchange connector.
 //
 
-class Warrior
+class ExchangeConnector
 {
 public:
-	virtual ~Warrior() noexcept = default;
+	virtual ~ExchangeConnector() noexcept = default;
 
 public:
-	virtual WARRIOR_ID GetId() const noexcept = 0;
-	virtual void PrintInfo() const noexcept = 0;
+	virtual EXCHANGE_CONNECTOR_ID GetId() const noexcept = 0;
 };
 
-using WarriorUnPtr = std::unique_ptr<Warrior>;
-using WarriorShPtr = std::shared_ptr<Warrior>;
+using ExchangeConnectorUnPtr = std::unique_ptr<ExchangeConnector>;
+using ExchangeConnectorShPtr = std::shared_ptr<ExchangeConnector>;
 
 //
-// Factory.
+// Exchange connector factory.
 //
 
-class Factory
+class ExchangeConnectorFactory
 {
 public:
-	using MapType = std::map<std::string, std::function<WarriorUnPtr()>>;
+	using MapType = std::map<std::string, std::function<ExchangeConnectorUnPtr()>>;
 
 public:
-	Factory() noexcept = default;
-	virtual ~Factory() noexcept = default;
+	ExchangeConnectorFactory() noexcept = default;
+	virtual ~ExchangeConnectorFactory() noexcept = default;
 
-	Factory(const Factory&) = delete;
-	Factory& operator=(const Factory&) = delete;
+	ExchangeConnectorFactory(const ExchangeConnectorFactory&) = delete;
+	ExchangeConnectorFactory& operator=(const ExchangeConnectorFactory&) = delete;
 
-	Factory(Factory&&) noexcept = delete;
-	Factory& operator=(Factory&&) noexcept = delete;
+	ExchangeConnectorFactory(ExchangeConnectorFactory&&) noexcept = delete;
+	ExchangeConnectorFactory& operator=(ExchangeConnectorFactory&&) noexcept = delete;
 
 public:
-	static WarriorUnPtr CreateInstance(const std::string& s);
+	static ExchangeConnectorUnPtr Create(const std::string& s);
 
 protected:
 	static MapType _map;
 };
 
-//
-// FactoryRegister.
-//
-
 template<typename T>
-class FactoryRegister : Factory
+class ExchangeConnectorRegister : ExchangeConnectorFactory
 {
 public:
-	FactoryRegister(const std::string& s)
+	ExchangeConnectorRegister(const std::string& s)
 	{
 		_map.insert(std::make_pair(s, std::make_unique<T>));
 	}
 };
 
 #define REGISTER_DEC_TYPE(NAME) \
-	static FactoryRegister<NAME> reg
+	static ExchangeConnectorRegister<NAME ## ExchangeConnector> reg
 
 #define REGISTER_DEF_TYPE(NAME) \
-	FactoryRegister<NAME> NAME::reg(#NAME)
+	ExchangeConnectorRegister<NAME ## ExchangeConnector> \
+		NAME ## ExchangeConnector::reg(#NAME)
 
 //
-// Specific warriors.
+// Specific exchange connectors.
 //
 
-class Infantryman : public Warrior
+class GoogleAdXExchangeConnector : public ExchangeConnector
 {
 public:
-	virtual ~Infantryman() noexcept = default;
-
-public:
-	WARRIOR_ID GetId() const noexcept override
+	EXCHANGE_CONNECTOR_ID GetId() const noexcept override
 	{
-		return WARRIOR_ID::INFANTRYMAN;
-	}
-	void PrintInfo() const noexcept override
-	{
-		std::cout << "class Infantryman : public Warrior" << std::endl;
+		return EXCHANGE_CONNECTOR_ID::GOOGLE_ADX;
 	}
 
 private:
-	REGISTER_DEC_TYPE(Infantryman);
+	REGISTER_DEC_TYPE(GoogleAdX);
 };
 
-class Archer : public Warrior
+class SmaatoExchangeConnector : public ExchangeConnector
 {
 public:
-	virtual ~Archer() noexcept = default;
-
-public:
-	WARRIOR_ID GetId() const noexcept override
+	EXCHANGE_CONNECTOR_ID GetId() const noexcept override
 	{
-		return WARRIOR_ID::ARCHER;
-	}
-	void PrintInfo() const noexcept override
-	{
-		std::cout << "class Archer : public Warrior" << std::endl;
+		return EXCHANGE_CONNECTOR_ID::SMAATO;
 	}
 
 private:
-	REGISTER_DEC_TYPE(Archer);
+	REGISTER_DEC_TYPE(Smaato);
 };
 
+////////////////////////////////////////////////////////////////////////////////
 ///
 /// Example #2. Generalized Constructor.
 ///
@@ -228,7 +216,88 @@ private:
 	}
 };
 
+////////////////////////////////////////////////////////////////////////////////
+///
+/// Example #3 Classical version.
+///
+
+// Only for testing.
+enum class WARRIOR_ID : uint32_t
+{
+	INFANTRYMAN = 1,
+	ARCHER = 2
+};
+
+//
+// Abstract warrior.
+//
+
+class Warrior
+{
+public:
+	virtual ~Warrior() noexcept = default;
+
+public:
+	virtual WARRIOR_ID GetId() const noexcept = 0;
+};
+
+using WarriorUnPtr = std::unique_ptr<Warrior>;
+using WarriorShPtr = std::shared_ptr<Warrior>;
+
+//
+// Specific warriors.
+//
+
+class Infantryman : public Warrior
+{
+public:
+	WARRIOR_ID GetId() const noexcept override
+	{
+		return WARRIOR_ID::INFANTRYMAN;
+	}
+};
+
+class Archer : public Warrior
+{
+public:
+	WARRIOR_ID GetId() const noexcept override
+	{
+		return WARRIOR_ID::ARCHER;
+	}
+};
+
+//
+// Abstract warrior factory.
+//
+
+class WarriorFactory
+{
+public:
+	virtual ~WarriorFactory() noexcept = default;
+
+public:
+	virtual WarriorUnPtr CreateWarrior() = 0;
+};
+
+using WarriorFactoryUnPtr = std::unique_ptr<WarriorFactory>;
+
+//
+// Specific warrior factory.
+//
+
+class InfantryFactory : public WarriorFactory
+{
+public:
+	WarriorUnPtr CreateWarrior() override;
+};
+
+class ArchersFactory : public WarriorFactory
+{
+public:
+	WarriorUnPtr CreateWarrior() override;
+};
+
 } // namespace creational
 } // namespace pattern
 
-#endif // PATTERNS_FACTORY_METHOD_H
+#endif // PATTERNS_CREATIONAL_FACTORY_METHOD_H

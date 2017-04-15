@@ -24,40 +24,21 @@ namespace pc = pattern::creational;
 
 SUITE(FactoryMethodTest)
 {
-	TEST(InfantrymanTest)
+	TEST(GoogleAdXTest)
 	{
-		auto infantryman = pc::Factory::CreateInstance("Infantryman");
-		CHECK(infantryman->GetId() == pc::WARRIOR_ID::INFANTRYMAN);
-		infantryman->PrintInfo();
+		auto adx = pc::ExchangeConnectorFactory::Create("GoogleAdX");
+		CHECK(adx->GetId() == pc::EXCHANGE_CONNECTOR_ID::GOOGLE_ADX);
 	}
 
-	TEST(ArcherTest)
+	TEST(SmaatoTest)
 	{
-		auto archer = pc::Factory::CreateInstance("Archer");
-		CHECK(archer->GetId() == pc::WARRIOR_ID::ARCHER);
-		archer->PrintInfo();
+		auto smaato = pc::ExchangeConnectorFactory::Create("Smaato");
+		CHECK(smaato->GetId() == pc::EXCHANGE_CONNECTOR_ID::SMAATO);
 	}
 
-	TEST(SetTest)
+	TEST(UnknownExchangeTest)
 	{
-		constexpr uint32_t size = 10;
-		std::vector<pc::WarriorUnPtr> v(size);
-		for (uint32_t i = 0; i < size; ++i) {
-			v[i] = (i % 2 == 0) ? pc::Factory::CreateInstance("Archer")
-				: pc::Factory::CreateInstance("Infantryman");
-		}
-		for (uint32_t i = 0; i < size; ++i) {
-			if (i % 2 == 0) {
-				CHECK(v[i]->GetId() == pc::WARRIOR_ID::ARCHER);
-			} else {
-				CHECK(v[i]->GetId() == pc::WARRIOR_ID::INFANTRYMAN);
-			}
-		}
-	}
-
-	TEST(UnknownWarriorTest)
-	{
-		auto unknown = pc::Factory::CreateInstance("Unknown");
+		auto unknown = pc::ExchangeConnectorFactory::Create("Unknown");
 		CHECK(unknown == nullptr);
 	}
 
@@ -83,6 +64,36 @@ SUITE(FactoryMethodTest)
 	{
 		auto b = pc::ProductFactory::Create(pc::PRODUCT_ID::PRODUCT_B, 321);
 		CHECK(b == nullptr);
+	}
+
+	TEST(CreateInfantrymanTest)
+	{
+		pc::WarriorFactoryUnPtr archerFactory = std::make_unique<pc::InfantryFactory>();
+		constexpr size_t size = 10;
+		std::vector<pc::WarriorShPtr> troop;
+		troop.reserve(size);
+		for (size_t i = 0; i < size; ++i) {
+			troop.push_back(archerFactory->CreateWarrior());
+		}
+		CHECK(troop.size() == size);
+		for_each(std::begin(troop), std::end(troop), [] (pc::WarriorShPtr w) {
+			CHECK(w->GetId() == pc::WARRIOR_ID::INFANTRYMAN);
+		});
+	}
+
+	TEST(CreateArcherTest)
+	{
+		pc::WarriorFactoryUnPtr archerFactory = std::make_unique<pc::ArchersFactory>();
+		constexpr size_t size = 10;
+		std::vector<pc::WarriorShPtr> troop;
+		troop.reserve(size);
+		for (size_t i = 0; i < size; ++i) {
+			troop.push_back(archerFactory->CreateWarrior());
+		}
+		CHECK(troop.size() == size);
+		for_each(std::begin(troop), std::end(troop), [] (pc::WarriorShPtr w) {
+			CHECK(w->GetId() == pc::WARRIOR_ID::ARCHER);
+		});
 	}
 }
 
