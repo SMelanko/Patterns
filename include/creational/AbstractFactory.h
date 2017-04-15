@@ -1,7 +1,11 @@
 #pragma once
 
-#ifndef PATTERNS_ABSTRACT_FACTORY_H
-#define PATTERNS_ABSTRACT_FACTORY_H
+#ifndef PATTERNS_CREATIONAL_ABSTRACT_FACTORY_H
+#define PATTERNS_CREATIONAL_ABSTRACT_FACTORY_H
+
+///
+/// Creates an instance of several families of classes.
+///
 
 #include <iostream>
 #include <memory>
@@ -18,37 +22,48 @@ namespace creational
 class Button
 {
 public:
-	inline virtual ~Button() = default;
+	inline virtual ~Button() noexcept = default;
+
+public:
 	virtual void Paint() const noexcept = 0;
 };
 
-// Product A1.
+using ButtonUnPtr = std::unique_ptr<Button>;
+
+//
+// Specific A products.
+//
+
 class WinButton : public Button
 {
 public:
-	inline virtual ~WinButton() = default;
+	inline virtual ~WinButton() noexcept = default;
+
+public:
 	void Paint() const noexcept override
 	{
 		std::cout << "WinButton" << std::endl;
 	}
 };
 
-// Product A2.
 class MacButton : public Button
 {
 public:
-	inline virtual ~MacButton() = default;
+	inline virtual ~MacButton() noexcept = default;
+
+public:
 	void Paint() const noexcept override
 	{
 		std::cout << "MacButton" << std::endl;
 	}
 };
 
-// Product A3.
 class UbuntuButton : public Button
 {
 public:
-	inline virtual ~UbuntuButton() = default;
+	inline virtual ~UbuntuButton() noexcept = default;
+
+public:
 	void Paint() const noexcept override
 	{
 		std::cout << "UbuntuButton" << std::endl;
@@ -62,37 +77,48 @@ public:
 class ScrollBar
 {
 public:
-	inline virtual ~ScrollBar() = default;
+	inline virtual ~ScrollBar() noexcept = default;
+
+public:
 	virtual void Paint() const noexcept = 0;
 };
 
-// Product B1.
+using ScrollBarUnPtr = std::unique_ptr<ScrollBar>;
+
+//
+// Specific B products.
+//
+
 class WinScrollBar : public ScrollBar
 {
 public:
-	inline virtual ~WinScrollBar() = default;
+	inline virtual ~WinScrollBar() noexcept = default;
+
+public:
 	void Paint() const noexcept override
 	{
 		std::cout << "WinScrollBar" << std::endl;
 	}
 };
 
-// Product B2.
 class MacScrollBar : public ScrollBar
 {
 public:
-	inline virtual ~MacScrollBar() = default;
+	inline virtual ~MacScrollBar() noexcept = default;
+
+public:
 	void Paint() const noexcept override
 	{
 		std::cout << "MacScrollBar" << std::endl;
 	}
 };
 
-// Product B3.
 class UbuntuScrollBar : public ScrollBar
 {
 public:
-	inline virtual ~UbuntuScrollBar() = default;
+	inline virtual ~UbuntuScrollBar() noexcept = default;
+
+public:
 	void Paint() const noexcept override
 	{
 		std::cout << "UbuntuScrollBar" << std::endl;
@@ -106,51 +132,60 @@ public:
 class GuiFactory
 {
 public:
-	inline virtual ~GuiFactory() = default;
-	virtual std::unique_ptr<Button> CreateButton() const = 0;
-	virtual std::unique_ptr<ScrollBar> CreateScrollBar() const = 0;
+	inline virtual ~GuiFactory() noexcept = default;
+
+public:
+	virtual ButtonUnPtr CreateButton() const = 0;
+	virtual ScrollBarUnPtr CreateScrollBar() const = 0;
 };
 
-// Concrete factory 1.
+//
+// Specific factories.
+//
+
 class WinFactory : public GuiFactory
 {
 public:
-	inline virtual ~WinFactory() = default;
-	std::unique_ptr<Button> CreateButton() const override
+	inline virtual ~WinFactory() noexcept = default;
+
+public:
+	ButtonUnPtr CreateButton() const override
 	{
 		return std::make_unique<WinButton>();
 	}
-	std::unique_ptr<ScrollBar> CreateScrollBar() const override
+	ScrollBarUnPtr CreateScrollBar() const override
 	{
 		return std::make_unique<WinScrollBar>();
 	}
 };
 
-// Concrete factory 2.
 class MacFactory : public GuiFactory
 {
 public:
-	inline virtual ~MacFactory() = default;
-	std::unique_ptr<Button> CreateButton() const override
+	inline virtual ~MacFactory() noexcept = default;
+
+public:
+	ButtonUnPtr CreateButton() const override
 	{
 		return std::make_unique<MacButton>();
 	}
-	std::unique_ptr<ScrollBar> CreateScrollBar() const override
+	ScrollBarUnPtr CreateScrollBar() const override
 	{
 		return std::make_unique<MacScrollBar>();
 	}
 };
 
-// Concrete factory 3.
 class UbuntuFactory : public GuiFactory
 {
 public:
-	inline virtual ~UbuntuFactory() = default;
-	std::unique_ptr<Button> CreateButton() const override
+	inline virtual ~UbuntuFactory() noexcept = default;
+
+public:
+	ButtonUnPtr CreateButton() const override
 	{
 		return std::make_unique<UbuntuButton>();
 	}
-	std::unique_ptr<ScrollBar> CreateScrollBar() const override
+	ScrollBarUnPtr CreateScrollBar() const override
 	{
 		return std::make_unique<UbuntuScrollBar>();
 	}
@@ -159,4 +194,4 @@ public:
 } // namespace creational
 } // namespace pattern
 
-#endif // PATTERNS_ABSTRACT_FACTORY_H
+#endif // PATTERNS_CREATIONAL_ABSTRACT_FACTORY_H
