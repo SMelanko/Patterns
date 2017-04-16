@@ -1,7 +1,12 @@
 #pragma once
 
-#ifndef PATTERNS_BUILDER_H
-#define PATTERNS_BUILDER_H
+#ifndef PATTERNS_CREATIONAL_BUILDER_H
+#define PATTERNS_CREATIONAL_BUILDER_H
+
+///
+/// Allows constructing complex objects step by step.
+/// Separates object construction from its representation.
+///
 
 #include <array>
 #include <iostream>
@@ -19,12 +24,13 @@ namespace creational
 class Body
 {
 public:
-	Body() = default;
-	explicit Body(const std::string& shape) noexcept
+	Body() noexcept = default;
+	explicit Body(const std::string& shape)
 		: _shape{ shape }
 	{
 	}
 
+public:
 	std::string GetShape() const noexcept
 	{
 		return _shape;
@@ -42,12 +48,13 @@ private:
 class Engine
 {
 public:
-	constexpr Engine() = default;
+	constexpr Engine() noexcept = default;
 	explicit constexpr Engine(const int horsepower)
 		: _horsepower{ horsepower }
 	{
 	}
 
+public:
 	constexpr int GetHorsePower() const noexcept
 	{
 		return _horsepower;
@@ -65,12 +72,13 @@ private:
 class Wheel
 {
 public:
-	constexpr Wheel() = default;
+	constexpr Wheel() noexcept = default;
 	explicit constexpr Wheel(const int size) noexcept
 		: _size{ size }
 	{
 	}
 
+public:
 	constexpr int GetSize() const noexcept
 	{
 		return _size;
@@ -96,46 +104,47 @@ class Car
 public:
 	Car() = default;
 
+public:
 	void PrintSpecifications() const noexcept
 	{
-		std::cout << "Body: " << body.GetShape() << std::endl;
-		std::cout << "Engine horsepower: " << engine.GetHorsePower() << std::endl;
-		std::cout << "Tire size: " << wheels[0].GetSize() << "'" << std::endl;
+		std::cout << "Body: " << _body.GetShape() << std::endl;
+		std::cout << "Engine horsepower: " << _engine.GetHorsePower() << std::endl;
+		std::cout << "Tire size: " << _wheels[0].GetSize() << "'" << std::endl;
 	}
 
 	Body GetBody() const noexcept
 	{
-		return body;
+		return _body;
 	}
 	Engine GetEngine() const noexcept
 	{
-		return engine;
+		return _engine;
 	}
 	Wheels GetWheels() const noexcept
 	{
-		return wheels;
+		return _wheels;
 	}
 
-	void SetBody(const Body& value)
+	void SetBody(const Body& body)
 	{
-		body = value;
+		_body = body;
 	}
-	void SetEngine(const Engine& value)
+	void SetEngine(const Engine& engine)
 	{
-		engine = value;
+		_engine = engine;
 	}
-	void SetWheels(const Wheels& value)
+	void SetWheels(const Wheels& sheels)
 	{
-		wheels = value;
+		_wheels = sheels;
 	}
 
 private:
-	Body body;
-	Engine engine;
-	Wheels wheels;
+	Body _body;
+	Engine _engine;
+	Wheels _wheels;
 };
 
-using CarPtr = std::shared_ptr<Car>;
+using CarShPtr = std::shared_ptr<Car>;
 
 //
 // Abstract builder.
@@ -144,8 +153,9 @@ using CarPtr = std::shared_ptr<Car>;
 class Builder
 {
 public:
-	virtual ~Builder() = default;
+	virtual ~Builder() noexcept = default;
 
+public:
 	virtual void BuildBody() = 0;
 	virtual void BuildEngine() = 0;
 	virtual void BuildWheels() = 0;
@@ -155,14 +165,16 @@ public:
 		_car.reset(new Car{});
 	}
 
-	CarPtr GetCar() const noexcept
+	CarShPtr GetCar() const noexcept
 	{
 		return _car;
 	}
 
 protected:
-	CarPtr _car;
+	CarShPtr _car;
 };
+
+using BuilderShPtr = std::shared_ptr<Builder>;
 
 //
 // Director.
@@ -171,15 +183,14 @@ protected:
 class Director
 {
 public:
-	using BuilderPtr = std::shared_ptr<Builder>;
-
-	Director() = default;
-	Director(BuilderPtr builder)
+	Director() noexcept = default;
+	Director(BuilderShPtr builder)
 		: _builder{ builder }
 	{
 	}
 
-	CarPtr ConstructCar() const
+public:
+	CarShPtr ConstructCar() const
 	{
 		_builder->CreateNewCar();
 		_builder->BuildBody();
@@ -188,18 +199,18 @@ public:
 		return _builder->GetCar();
 	}
 
-	BuilderPtr GetBuilder() const noexcept
+	BuilderShPtr GetBuilder() const noexcept
 	{
 		return _builder;
 	}
 
-	void SetBuilder(BuilderPtr builder)
+	void SetBuilder(BuilderShPtr builder)
 	{
 		_builder = builder;
 	}
 
 private:
-	BuilderPtr _builder = nullptr;
+	BuilderShPtr _builder = nullptr;
 };
 
 //
@@ -209,8 +220,9 @@ private:
 class JeepBuilder : public Builder
 {
 public:
-	virtual ~JeepBuilder() = default;
+	virtual ~JeepBuilder() noexcept = default;
 
+public:
 	void BuildBody() override
 	{
 		_car->SetBody(Body{ "SUV" });
@@ -249,4 +261,4 @@ public:
 } // namespace creational
 } // namespace pattern
 
-#endif // PATTERNS_BUILDER_H
+#endif // PATTERNS_CREATIONAL_BUILDER_H

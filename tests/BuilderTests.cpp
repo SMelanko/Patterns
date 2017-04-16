@@ -1,27 +1,13 @@
-///////////////////////////////////////////////////////////////////////////////
-///
-/// Copyright (c) 2016 Slava Melanko.
-///
-/// This code is licensed under the MIT License (MIT).
-///
-/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-/// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-/// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-/// DEALINGS IN THE SOFTWARE.
-///
-///////////////////////////////////////////////////////////////////////////////
-
 #include "creational/Builder.h"
 
 #include <UnitTest++/UnitTest++.h>
 
+namespace pc = pattern::creational;
+
 static void BuildJeep()
 {
-	auto jeepBuilder = std::make_shared<pattern::creational::JeepBuilder>();
-	pattern::creational::Director dir{ jeepBuilder };
+	auto jeepBuilder = std::make_shared<pc::JeepBuilder>();
+	pc::Director dir{ jeepBuilder };
 
 	std::cout << std::endl << "Jeep" << std::endl;
 
@@ -36,8 +22,8 @@ static void BuildJeep()
 
 static void BuildMitsubishi()
 {
-	auto mitsuBuilder = std::make_shared<pattern::creational::MitsubishiBuilder>();
-	pattern::creational::Director dir{ mitsuBuilder };
+	auto mitsuBuilder = std::make_shared<pc::MitsubishiBuilder>();
+	pc::Director dir{ mitsuBuilder };
 
 	std::cout << std::endl << "Mitsubishi" << std::endl;
 
