@@ -1,7 +1,11 @@
 #pragma once
 
-#ifndef PATTERNS_PROTOTYPE_H
-#define PATTERNS_PROTOTYPE_H
+#ifndef PATTERNS_CREATIONAL_PROTOTYPE_H
+#define PATTERNS_CREATIONAL_PROTOTYPE_H
+
+///
+/// A fully initialized instance to be copied or cloned.
+///
 
 #include <iostream>
 #include <memory>
@@ -13,6 +17,7 @@ namespace creational
 
 class Warrior;
 using WarriorUnPtr = std::unique_ptr<Warrior>;
+using WarriorShPtr = std::shared_ptr<Warrior>;
 
 //
 // Abstract product.
@@ -21,8 +26,9 @@ using WarriorUnPtr = std::unique_ptr<Warrior>;
 class Warrior
 {
 public:
-	virtual ~Warrior() = default;
+	virtual ~Warrior() noexcept = default;
 
+public:
 	virtual WarriorUnPtr Clone() = 0;
 	virtual void PrintInfo() const noexcept = 0;
 };
@@ -36,8 +42,9 @@ class Archer: public Warrior
 	friend class PrototypeFactory;
 
 public:
-	virtual ~Archer() = default;
+	virtual ~Archer() noexcept = default;
 
+public:
 	WarriorUnPtr Clone() override
 	{
 		return std::make_unique<Archer>(*this);
@@ -48,7 +55,7 @@ public:
 	}
 
 private:
-	Archer() = default;
+	Archer() noexcept = default;
 };
 
 class Infantryman: public Warrior
@@ -56,8 +63,9 @@ class Infantryman: public Warrior
 	friend class PrototypeFactory;
 
 public:
-	virtual ~Infantryman() = default;
+	virtual ~Infantryman() noexcept = default;
 
+public:
 	WarriorUnPtr Clone() override
 	{
 		return std::make_unique<Infantryman>(*this);
@@ -68,7 +76,7 @@ public:
 	}
 
 private:
-	Infantryman() = default;
+	Infantryman() noexcept = default;
 };
 
 //
@@ -85,4 +93,4 @@ public:
 } // namespace creational
 } // namespace pattern
 
-#endif // PATTERNS_PROTOTYPE_H
+#endif // PATTERNS_CREATIONAL_PROTOTYPE_H
