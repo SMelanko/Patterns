@@ -4,7 +4,7 @@
 #define PATTERNS_CREATIONAL_BUILDER_H
 
 ///
-/// Allows constructing complex objects step by step.
+/// Allows constructing complex objects using step by step approach.
 /// Separates object construction from its representation.
 ///
 
