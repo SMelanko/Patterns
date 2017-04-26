@@ -3,9 +3,18 @@
 #ifndef PATTERNS_CREATIONAL_FACTORY_METHOD_H
 #define PATTERNS_CREATIONAL_FACTORY_METHOD_H
 
-///
-/// Create an instance of several derived classes.
-///
+/*
+
+Intent:
+	Define an interface for creating an object, but let subclasses decide which class to instantiate.
+	The Factory method lets a class defer instantiation it uses to subclasses.
+
+Applicability:
+	- a class can't anticipate the class of objects it must create.
+	- a class wants its subclasses to specify the objects it creates.
+	- classes delegate responsibility to one of several helper classes, and
+	  you want to localize the knowledge of which helper subclass is the delegate.
+*/
 
 #include <iostream>
 #include <map>
